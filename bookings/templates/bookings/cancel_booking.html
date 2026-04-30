@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Cancel Booking — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout" style="max-width:560px;">
+
+  <!-- Red heading to signal destructive action -->
+  <h2 class="step-heading" style="color:var(--red);">CANCEL BOOKING</h2>
+  <p class="step-subheading">This action cannot be undone. Your slot will be released for others to book.</p>
+
+  <!-- Summary of the booking to be cancelled — confirmation of what will be cancelled -->
+  <div class="summary-card" style="margin-bottom:2rem;">
+    <div class="summary-card-title">Booking to Cancel</div>
+    <div class="summary-row"><span class="key">Reference</span><span class="val">#{{ booking.ref }}</span></div>
+    <div class="summary-row"><span class="key">Service</span><span class="val">{{ booking.service.name }}</span></div>
+    <div class="summary-row"><span class="key">Barber</span><span class="val">{{ booking.barber }}</span></div>
+    <div class="summary-row"><span class="key">Date</span><span class="val">{{ booking.date|date:"l, j F Y" }}</span></div>
+    <div class="summary-row"><span class="key">Time</span><span class="val">{{ booking.start_time|time:"H:i" }}</span></div>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <!--
+      CancellationForm has one field: reason (optional textarea).
+      The reason is stored in the Cancellation audit record.
+      required=False means the form submits even without a reason.
+    -->
+    {% for field in form %}
+      <div class="form-group" style="margin-bottom:1.5rem;">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}
+          <span style="color:var(--muted)">(optional)</span>
+        </label>
+        {{ field }}
+      </div>
+    {% endfor %}
+
+    <div class="step-nav">
+      <!-- "Keep Booking" goes back without any changes -->
+      <a href="{% url 'my_bookings' %}" class="btn btn-ghost">← Keep Booking</a>
+      <!-- Red danger button — confirms the destructive action -->
+      <button type="submit" class="btn btn-danger" style="padding:13px 30px;">
+        Yes, Cancel Booking
+      </button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
