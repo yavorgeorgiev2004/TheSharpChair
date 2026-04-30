@@ -1,37 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  {% load static %}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!--
-    block title  allows child templates to set a custom page title.
-    If a child doesn't override this block, the default shows.
-    Example in child: block title Services — The Sharp Chair endblock
-  -->
   <title>{% block title %}The Sharp Chair{% endblock %}</title>
-
-  <!--
-     load static  loads Django's static files template tag library.
-    Required before any static  tag can be used in this template.
-    The  static  tag generates the correct URL for static files:
-      - Locally:  /static/css/style.css
-      - Heroku:   /static/css/style.abc123.css (whitenoise adds content hash)
-  -->
-  {% load static %}
-
-  <!-- Google Fonts — loaded from CDN, no local installation needed -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
-
-  <!-- Main stylesheet — all custom CSS for the project -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
-  <!--
-     block extra_css — optional slot for page-specific styles.
-    Most pages leave this empty. Use sparingly — prefer style.css.
-  -->
   {% block extra_css %}{% endblock %}
 </head>
 <body>
