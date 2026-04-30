@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Book — Your Details — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout">
+
+  {% include 'bookings/partials/step_progress.html' with step=4 %}
+
+  <h2 class="step-heading">YOUR DETAILS</h2>
+  <p class="step-subheading">Review your booking and confirm your contact information.</p>
+
+  <!-- Booking summary — read-only review before submitting -->
+  <div class="summary-card" style="margin-bottom:2rem;">
+    <div class="summary-card-title">Booking Summary</div>
+
+    <!-- {{ service.name }} → FK traversal — accesses Service record name -->
+    <div class="summary-row">
+      <span class="key">Service</span>
+      <span class="val">{{ service.name }}</span>
+    </div>
+
+    <!--
+      {{ barber }} calls Barber.__str__() which returns
+      barber.user.get_full_name() — traverses the OneToOneField to User.
+    -->
+    <div class="summary-row">
+      <span class="key">Barber</span>
+      <span class="val">{{ barber }}</span>
+    </div>
+
+    <!-- date filter formats Python date → readable string -->
+    <div class="summary-row">
+      <span class="key">Date</span>
+      <span class="val">{{ chosen_date|date:"l, j F Y" }}</span>
+    </div>
+
+    <!-- time filter formats Python time → HH:MM -->
+    <div class="summary-row">
+      <span class="key">Time</span>
+      <span class="val">{{ start_time|time:"H:i" }}</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="key">Duration</span>
+      <span class="val">{{ service.duration_mins }} minutes</span>
+    </div>
+
+    <!-- Total price — DecimalField rendered as string -->
+    <div class="summary-row total">
+      <span class="key">Total</span>
+      <span class="val">£{{ service.price }}</span>
+    </div>
+  </div>
+
+  <!-- Personal details form -->
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-grid" style="margin-bottom:1rem;">
+      {% for field in form %}
+        <!--
+          Apply 'full' class to notes textarea so it spans the full width.
+          The form-grid uses two columns; 'full' has grid-column: 1 / -1.
+          field.name checks the Python attribute name of the form field.
+        -->
+        <div class="form-group {% if field.name == 'notes' %}full{% endif %}">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <span class="form-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="step-nav">
+      <a href="{% url 'book_step3' %}" class="btn btn-ghost">← Back</a>
+      <!--
+        Submit creates the Booking record in the database.
+        views.book_step4() runs full_clean() then save() on the Booking.
+      -->
+      <button type="submit" class="btn btn-primary">Confirm &amp; Book ✓</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
