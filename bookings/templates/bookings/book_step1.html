@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Book — Choose Service — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout">
+
+  <!--
+    Include the step progress indicator partial.
+    with step=1 passes the current step number so the correct
+    bubble is highlighted as active in the partial template.
+  -->
+  {% include 'bookings/partials/step_progress.html' with step=1 %}
+
+  <h2 class="step-heading">CHOOSE A SERVICE</h2>
+  <p class="step-subheading">Select what you'd like today. All prices include a hot towel finish.</p>
+
+  <form method="POST">
+    {% csrf_token %}<!-- Required on all POST forms -->
+
+    <div class="pick-grid">
+      <!--
+        Loop over services QuerySet. forloop.counter gives a unique number
+        for each iteration (1, 2, 3...) used to create unique input IDs.
+      -->
+      {% for service in services %}
+      <!--
+        <label for="id_service_N"> makes the entire card clickable.
+        Clicking anywhere on this label checks the radio inside it.
+      -->
+      <label class="pick-card" for="id_service_{{ forloop.counter }}">
+
+        <div class="pick-card-name">{{ service.name }}</div>
+        <div class="pick-card-sub">{{ service.duration_mins }} min</div>
+        <div class="pick-card-price">£{{ service.price }}</div>
+
+        <!--
+          Hidden radio input — the actual form field Django processes.
+          name="service" matches BookingStep1Form field name.
+          value="{{ service.id }}" sends the service's primary key.
+          style="display:none" hides the ugly default radio button.
+           if  pre-selects if this service was previously chosen
+          (e.g. user clicked back button).
+        -->
+        <input type="radio"
+               name="service"
+               id="id_service_{{ forloop.counter }}"
+               value="{{ service.id }}"
+               style="display:none;"
+               {% if form.service.value == service.id|stringformat:'s' %}checked{% endif %}>
+      </label>
+      {% endfor %}
+    </div>
+
+    <!-- Show form validation errors if no service was selected on submit -->
+    {% if form.service.errors %}
+      <div class="alert alert-error">{{ form.service.errors }}</div>
+    {% endif %}
+
+    <div class="step-nav">
+      <a href="{% url 'home' %}" class="btn btn-ghost">← Home</a>
+      <button type="submit" class="btn btn-primary">Continue →</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /*
+   * Card selection visual feedback.
+   * When a label card is clicked:
+   *   1. Remove 'selected' class from all cards
+   *   2. Add 'selected' class to the clicked card
+   *   3. Check the hidden radio input inside it
+   *
+   * The radio input handles the actual form submission.
+   * This JS only handles the visual highlight.
+   */
+  document.querySelectorAll('.pick-card').forEach(card => {
+    const radio = card.querySelector('input[type=radio]');
+
+    // Pre-highlight any card that was already selected (e.g. after back button)
+    if (radio && radio.checked) card.classList.add('selected');
+
+    card.addEventListener('click', () => {
+      // Clear all selections
+      document.querySelectorAll('.pick-card').forEach(c => c.classList.remove('selected'));
+      // Highlight clicked card
+      card.classList.add('selected');
+      // Check the radio (label click already does this, but explicit is safer)
+      if (radio) radio.checked = true;
+    });
+  });
+</script>
+{% endblock %}
