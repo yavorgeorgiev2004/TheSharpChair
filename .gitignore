@@ -1,0 +1,31 @@
+# Virtual environment — never commit
+venv/
+env/
+.venv/
+
+# Environment variables — contains SECRET_KEY and DATABASE_URL
+# NEVER commit this file
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local SQLite database — local only, Heroku uses PostgreSQL
+db.sqlite3
+
+# Static files collected by collectstatic — regenerated on each deploy
+staticfiles/
+
+# macOS system files
+.DS_Store
+
+# Log files
+*.log
+
+# Python distribution/packaging
+*.egg-info/
+dist/
+build/
