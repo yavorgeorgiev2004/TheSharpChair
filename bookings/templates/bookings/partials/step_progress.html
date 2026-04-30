@@ -1,0 +1,39 @@
+
+<div class="step-progress">
+
+  <!-- Step 1 — Service selection -->
+  <div class="step-item {% if step >= 1 %}{% if step > 1 %}done{% else %}active{% endif %}{% endif %}">
+    <!--
+      If step > 1: show ✓ (this step is complete)
+      If step = 1: show 1 (this is the current step)
+    -->
+    <div class="step-bubble">{% if step > 1 %}✓{% else %}1{% endif %}</div>
+    <div class="step-text">Service</div>
+  </div>
+
+  <!-- Connector line between steps -->
+  <div class="step-connector"></div>
+
+  <!-- Step 2 — Barber selection -->
+  <div class="step-item {% if step >= 2 %}{% if step > 2 %}done{% else %}active{% endif %}{% endif %}">
+    <div class="step-bubble">{% if step > 2 %}✓{% else %}2{% endif %}</div>
+    <div class="step-text">Barber</div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- Step 3 — Date and time -->
+  <div class="step-item {% if step >= 3 %}{% if step > 3 %}done{% else %}active{% endif %}{% endif %}">
+    <div class="step-bubble">{% if step > 3 %}✓{% else %}3{% endif %}</div>
+    <div class="step-text">Date &amp; Time</div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- Step 4 — Confirm booking (always last, never shows as done here) -->
+  <div class="step-item {% if step >= 4 %}active{% endif %}">
+    <div class="step-bubble">4</div>
+    <div class="step-text">Confirm</div>
+  </div>
+
+</div>
