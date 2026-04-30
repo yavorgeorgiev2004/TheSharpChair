@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Services — The Sharp Chair{% endblock %}
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════════════════════
+     PAGE HEADER
+     Reusable header pattern used across inner pages.
+     The page-header-eyebrow has a gold line before it via CSS ::before.
+     ══════════════════════════════════════════════════════════════════ -->
+<header class="page-header fade-up">
+  <div class="page-header-eyebrow">What We Offer</div>
+  <h1>OUR <span class="accent">SERVICES</span></h1>
+  <p>All services include a hot towel finish and styling consultation. Walk-ins not accepted.</p>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     SERVICES GRID
+     CSS grid — auto-fills columns at minimum 290px each.
+     A 1px gap with background: var(--border) creates the grid lines
+     between cards (the gap IS the border, not a border property).
+     ══════════════════════════════════════════════════════════════════ -->
+<section class="services-grid">
+
+  <!--
+     for service in services  — Django template for loop.
+    Iterates over the QuerySet passed from views.services_view().
+    Each variable (service.name, service.price, etc.) accesses a
+    field on the Service model instance for this iteration.
+  -->
+  {% for service in services %}
+
+  <article class="service-card fade-up">
+
+    <!-- {{ service.name }} → e.g. "Classic Haircut" -->
+    <div class="service-card-name">{{ service.name }}</div>
+
+    <!-- {{ service.description }} → full description text from the database -->
+    <p class="service-card-desc">{{ service.description }}</p>
+
+    <div class="service-card-footer">
+      <!--
+        {{ service.price }} → DecimalField value e.g. 18.00
+        Django renders Decimal as a string automatically.
+        The £ symbol is hardcoded in the template.
+      -->
+      <div class="service-card-price">£{{ service.price }}</div>
+
+      <!-- {{ service.duration_mins }} → IntegerField e.g. 30 -->
+      <div class="service-card-duration">{{ service.duration_mins }} min</div>
+    </div>
+
+    <!-- CTA links to step 1 of the booking wizard -->
+    <div class="service-card-cta">
+      <a href="{% url 'book_step1' %}" class="btn btn-ghost btn-sm">Book This →</a>
+    </div>
+
+  </article>
+
+  <!--
+     empty  block — shown if the QuerySet is empty.
+    Protects against a blank page if no services are active.
+    To fix: go to /admin and set at least one service to is_active=True,
+    or run: python manage.py loaddata initial_data
+  -->
+  {% empty %}
+  <p style="padding:3rem; color:var(--muted);">
+    No services available at the moment. Please check back soon.
+  </p>
+
+  {% endfor %}
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     BOTTOM CTA STRIP
+     Encourages users to book after browsing services.
+     Flexbox layout — text left, button right — wraps on mobile.
+     ══════════════════════════════════════════════════════════════════ -->
+<section style="padding:3rem 4rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); gap:2rem; flex-wrap:wrap;">
+  <div>
+    <div style="font-family:'Bebas Neue',cursive; font-size:1.8rem; letter-spacing:3px;">READY TO BOOK?</div>
+    <p style="color:var(--muted); font-size:0.9rem; margin-top:0.4rem;">Pick your service, choose your barber, lock in your slot.</p>
+  </div>
+  <a href="{% url 'book_step1' %}" class="btn btn-primary">Book Appointment →</a>
+</section>
+
+{% endblock %}
