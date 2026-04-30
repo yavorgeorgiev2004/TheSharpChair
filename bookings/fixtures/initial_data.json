@@ -1,0 +1,8 @@
+[
+  {"model":"bookings.service","pk":1,"fields":{"name":"Classic Haircut","description":"Scissor cut and finish with premium styling product. Includes a full consultation.","duration_mins":30,"price":"18.00","is_active":true}},
+  {"model":"bookings.service","pk":2,"fields":{"name":"Fade & Blend","description":"Low, mid, or high fade with precision blade work. Our most popular service.","duration_mins":45,"price":"22.00","is_active":true}},
+  {"model":"bookings.service","pk":3,"fields":{"name":"Beard Trim","description":"Shape, line up and condition. Sculpted to suit your face with conditioning oil.","duration_mins":20,"price":"12.00","is_active":true}},
+  {"model":"bookings.service","pk":4,"fields":{"name":"Hot Towel Shave","description":"Traditional straight-razor shave with hot towel preparation and premium shaving cream.","duration_mins":40,"price":"25.00","is_active":true}},
+  {"model":"bookings.service","pk":5,"fields":{"name":"Cut & Beard Combo","description":"The full works — haircut plus full beard styling in one sitting. Best value.","duration_mins":60,"price":"30.00","is_active":true}},
+  {"model":"bookings.service","pk":6,"fields":{"name":"Kids Cut","description":"For under 12s. A relaxed, patient cut in a friendly environment.","duration_mins":20,"price":"12.00","is_active":true}}
+]
