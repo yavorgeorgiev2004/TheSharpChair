@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Edit Booking — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout" style="max-width:600px;">
+
+  <h2 class="step-heading">EDIT BOOKING</h2>
+  <!-- booking.ref is the unique reference auto-generated in Booking.save() -->
+  <p class="step-subheading">Update your date, time, or notes for booking #{{ booking.ref }}.</p>
+
+  <!-- Current booking details — read-only reference for the user -->
+  <div class="summary-card" style="margin-bottom:2rem;">
+    <div class="summary-card-title">Current Booking</div>
+    <div class="summary-row"><span class="key">Service</span><span class="val">{{ booking.service.name }}</span></div>
+    <div class="summary-row"><span class="key">Barber</span><span class="val">{{ booking.barber }}</span></div>
+    <div class="summary-row"><span class="key">Date</span><span class="val">{{ booking.date|date:"l, j F Y" }}</span></div>
+    <div class="summary-row"><span class="key">Time</span><span class="val">{{ booking.start_time|time:"H:i" }}</span></div>
+  </div>
+
+  <!--
+    EditBookingForm is a ModelForm — form.save() generates an
+    UPDATE SQL statement automatically on valid submission.
+    views.edit_booking() calls full_clean() before save() to
+    run business rule validation (weekday, opening hours, overlap).
+  -->
+  <form method="POST">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          {% for error in field.errors %}
+            <span class="form-error">{{ error }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="step-nav">
+      <!-- Cancel goes back without saving — no database changes -->
+      <a href="{% url 'my_bookings' %}" class="btn btn-ghost">← Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
