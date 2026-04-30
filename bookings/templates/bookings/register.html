@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <div class="auth-logo">THE <span>SHARP</span> CHAIR</div>
+    <h1 class="auth-title">CREATE ACCOUNT</h1>
+    <p class="auth-sub">Register to start booking appointments online.</p>
+
+    <form method="POST" class="auth-form">
+      {% csrf_token %}<!-- Required on all POST forms — prevents CSRF attacks -->
+
+      <!--
+         for field in form  iterates over all RegisterForm fields.
+        The order matches the 'fields' list in RegisterForm.Meta:
+          first_name, last_name, email, username, password1, password2
+        Plus the extra 'phone' field added to RegisterForm.
+      -->
+      {% for field in form %}
+        <div class="form-group">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+          {{ field }}<!-- renders the appropriate <input> for each field type -->
+
+          <!--
+            Help text — shown for password fields explaining requirements.
+             field.help_text  comes from Django's password validators.
+            Only rendered if help text exists (empty for most fields).
+          -->
+          {% if field.help_text %}
+            <small style="color:var(--muted); font-size:0.75rem;">{{ field.help_text }}</small>
+          {% endif %}
+
+          <!-- Inline validation errors shown beneath each field -->
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <span class="form-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+
+        </div>
+      {% endfor %}
+
+      <!-- Cross-field errors (e.g. passwords don't match) -->
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+    </form>
+
+    <div class="auth-divider">
+      Already have an account? <a href="{% url 'login' %}">Sign in</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
