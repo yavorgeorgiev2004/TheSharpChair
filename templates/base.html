@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--
+    block title  allows child templates to set a custom page title.
+    If a child doesn't override this block, the default shows.
+    Example in child: block title Services — The Sharp Chair endblock
+  -->
+  <title>{% block title %}The Sharp Chair{% endblock %}</title>
+
+  <!--
+     load static  loads Django's static files template tag library.
+    Required before any static  tag can be used in this template.
+    The  static  tag generates the correct URL for static files:
+      - Locally:  /static/css/style.css
+      - Heroku:   /static/css/style.abc123.css (whitenoise adds content hash)
+  -->
+  {% load static %}
+
+  <!-- Google Fonts — loaded from CDN, no local installation needed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+
+  <!-- Main stylesheet — all custom CSS for the project -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <!--
+     block extra_css — optional slot for page-specific styles.
+    Most pages leave this empty. Use sparingly — prefer style.css.
+  -->
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       NAVIGATION
+       Sticky nav bar present on every page.
+       Role-aware: shows different links for customers vs barbers.
+       ══════════════════════════════════════════════════════════════ -->
+  <nav class="nav">
+
+    <!-- Logo — always links back to home page -->
+    <a href="{% url 'home' %}" class="nav-logo">THE <span>SHARP</span> CHAIR</a>
+
+    <ul class="nav-links">
+
+      <!-- Home and Services — visible to everyone -->
+      <li>
+        <a href="{% url 'home' %}"
+           {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'services' %}"
+           {% if request.resolver_match.url_name == 'services' %}class="active"{% endif %}>
+          Services
+        </a>
+      </li>
+
+      <!--
+        Authenticated-only links.
+         if user.is_authenticated  checks Django's auth system.
+        Inside,  if user.barber  checks whether a Barber record
+        exists for this user — the role detection mechanism.
+        No roles table needed — the FK relationship IS the role.
+      -->
+      {% if user.is_authenticated %}
+
+        {% if user.barber %}
+          <!-- Barber account — show schedule instead of bookings -->
+          <li>
+            <a href="{% url 'barber_schedule' %}"
+               {% if request.resolver_match.url_name == 'barber_schedule' %}class="active"{% endif %}>
+              My Schedule
+            </a>
+          </li>
+        {% else %}
+          <!-- Customer account — show their bookings -->
+          <li>
+            <a href="{% url 'my_bookings' %}"
+               {% if request.resolver_match.url_name == 'my_bookings' %}class="active"{% endif %}>
+              My Bookings
+            </a>
+          </li>
+        {% endif %}
+
+        <!-- Sign out — available to all authenticated users -->
+        <li>
+          <a href="{% url 'logout' %}">Sign Out ({{ user.first_name }})</a>
+        </li>
+
+      {% else %}
+        <!-- Not logged in — show Sign In link -->
+        <li>
+          <a href="{% url 'login' %}"
+             {% if request.resolver_match.url_name == 'login' %}class="active"{% endif %}>
+            Sign In
+          </a>
+        </li>
+      {% endif %}
+
+      <!-- Book Now CTA — always visible, redirects to login if not authenticated -->
+      <li><a href="{% url 'book_step1' %}" class="nav-cta">Book Now</a></li>
+
+    </ul>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FLASH MESSAGES
+       Django's messages framework stores one-time notifications in
+       the session. They display here once then disappear on reload.
+       Used in views.py with: messages.success(request, "text")
+       CSS class comes from MESSAGE_TAGS in settings.py:
+         success → alert-success (green)
+         error   → alert-error   (red)
+         info    → alert-info    (gold)
+       ══════════════════════════════════════════════════════════════ -->
+  {% if messages %}
+  <div class="messages-container">
+    {% for message in messages %}
+      <!--
+        message.tags gives the CSS class (e.g. 'alert-success')
+        set in settings.py MESSAGE_TAGS dictionary
+      -->
+      <div class="alert {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN CONTENT
+        block content  is the primary injection point.
+       Every child template fills this block with its unique content.
+       ══════════════════════════════════════════════════════════════ -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FOOTER
+       Shared footer on every page via template inheritance.
+       ══════════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-logo">THE <span>SHARP</span> CHAIR</div>
+    <p class="footer-copy">&copy; 2025 The Sharp Chair. All rights reserved.</p>
+    <nav class="footer-links">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'services' %}">Services</a>
+      <a href="{% url 'book_step1' %}">Book</a>
+    </nav>
+  </footer>
+
+  <!--
+   
+    Placed at the end of <body> so scripts load after HTML is parsed.
+    Used by book_step1.html, book_step2.html, book_step3.html for
+    card selection and AJAX slot fetching.
+  -->
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>
