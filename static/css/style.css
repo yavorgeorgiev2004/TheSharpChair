@@ -1,0 +1,606 @@
+/* ============================================================
+   The Sharp Chair — style.css
+   ============================================================
+   STRUCTURE OF THIS FILE
+   ----------------------
+   1.  Design Tokens (CSS custom properties / variables)
+   2.  Reset & Base styles
+   3.  Animations & keyframes
+   4.  Navigation
+   5.  Flash Messages
+   6.  Buttons
+   7.  Forms
+   8.  Page Header (reused across inner pages)
+   9.  Status Badges
+   10. Home Page — Hero section
+   11. Home Page — About strip
+   12. Services Page
+   13. Booking Wizard — layout, progress, cards, slots, summary
+   14. My Bookings / Barber Schedule
+   15. Auth Pages (login / register)
+   16. Footer
+   17. Responsive breakpoints (900px and 600px)
+
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   ----------------------------------
+   All colours and shared values are defined as CSS variables in :root.
+   To change the gold accent colour across the entire site:
+   just update --gold here. Everything that uses var(--gold) updates.
+
+   NAMING CONVENTIONS
+   ------------------
+   .nav-*        → navigation elements
+   .btn-*        → button variants
+   .form-*       → form elements
+   .page-*       → inner page headers
+   .hero-*       → home page hero section
+   .about-*      → home page about strip
+   .service-*    → services page cards
+   .booking-*    → booking wizard and booking list cards
+   .step-*       → wizard step progress indicator
+   .auth-*       → login and register pages
+   .badge-*      → status badge chips
+   .alert-*      → flash message alerts
+   .confirm-*    → booking confirmation page
+   .summary-*    → booking summary card
+   ============================================================ */
+
+
+/* ── 1. DESIGN TOKENS ─────────────────────────────────────── */
+:root {
+  --black:      #0d0d0d;   /* page background */
+  --dark:       #141414;   /* card backgrounds */
+  --card:       #1a1a1a;   /* slightly lighter card */
+  --border:     #2a2a2a;   /* all borders and dividers */
+  --gold:       #c9a84c;   /* primary accent colour */
+  --gold-light: #e8c96a;   /* hover state for gold elements */
+  --cream:      #f5f0e8;   /* primary text colour */
+  --muted:      #888888;   /* secondary text, labels */
+  --red:        #c0392b;   /* error, cancel, danger */
+  --green:      #27ae60;   /* success, confirmed status */
+  --radius:     4px;        /* border-radius for all cards/inputs */
+  --nav-height: 64px;       /* sticky nav height — used in calc() */
+  --transition: 0.2s ease;  /* standard transition duration */
+}
+
+
+/* ── 2. RESET & BASE ──────────────────────────────────────── */
+/* Box-sizing border-box: width/height include padding and border */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/*
+ * Grain texture overlay — creates a subtle film grain effect.
+ * Uses an SVG fractalNoise filter rendered as a base64 data URI.
+ * position: fixed covers the full viewport regardless of scroll.
+ * pointer-events: none means it doesn't block clicks.
+ * z-index: 9999 puts it above all content (purely visual, no interaction).
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+
+/* Thin custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+
+/* ── 3. ANIMATIONS ────────────────────────────────────────── */
+/*
+ * fadeUp: elements start 16px below and fade in.
+ * Used on hero elements and page headers with animation-delay
+ * classes (fade-up-1, fade-up-2 etc.) to create staggered entrance.
+ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/*
+ * poleSpin: animates the barber pole on the home page.
+ * background-position moves the repeating gradient diagonally
+ * creating the illusion of a spinning stripe pattern.
+ */
+@keyframes poleSpin {
+  from { background-position: 0 0; }
+  to   { background-position: 84px 84px; }
+}
+
+/*
+ * popIn: used on the confirmation checkmark circle.
+ * cubic-bezier creates an overshoot "bounce" effect.
+ */
+@keyframes popIn {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* Staggered animation delay classes — add to elements alongside fade-up */
+.fade-up   { animation: fadeUp 0.5s ease both; }
+.fade-up-1 { animation-delay: 0.1s; }
+.fade-up-2 { animation-delay: 0.2s; }
+.fade-up-3 { animation-delay: 0.3s; }
+.fade-up-4 { animation-delay: 0.4s; }
+
+
+/* ── 4. NAVIGATION ────────────────────────────────────────── */
+.nav {
+  position: sticky;    /* sticks to top of viewport on scroll */
+  top: 0;
+  z-index: 100;        /* above page content */
+  height: var(--nav-height);
+  background: rgba(13,13,13,0.96);
+  backdrop-filter: blur(12px); /* frosted glass effect */
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+}
+
+/* Logo — uses Bebas Neue display font */
+.nav-logo {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.6rem;
+  letter-spacing: 3px;
+  color: var(--gold);
+}
+.nav-logo span { color: var(--cream); }
+
+/* Nav link list */
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+.nav-links a {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color var(--transition);
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--cream); }
+
+/* Gold CTA button in nav — "Book Now" */
+.nav-cta {
+  background: var(--gold) !important;
+  color: var(--black) !important;
+  padding: 8px 22px !important;
+  border-radius: var(--radius) !important;
+  font-weight: 500 !important;
+  transition: background var(--transition) !important;
+}
+.nav-cta:hover { background: var(--gold-light) !important; }
+
+
+/* ── 5. FLASH MESSAGES ────────────────────────────────────── */
+/*
+ * Fixed position container — appears over page content in top-right.
+ * Messages auto-disappear on page reload (one-time via Django sessions).
+ * CSS class (alert-success/error/info) set in settings.py MESSAGE_TAGS.
+ */
+.messages-container {
+  position: fixed;
+  top: calc(var(--nav-height) + 1rem);
+  right: 1.5rem;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 340px;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  border-left: 3px solid;
+  animation: fadeUp 0.3s ease both;
+}
+.alert-error   { background: rgba(192,57,43,0.15);  border-color: var(--red);   color: #e07a70; }
+.alert-success { background: rgba(39,174,96,0.15);  border-color: var(--green); color: #6dca92; }
+.alert-info    { background: rgba(201,168,76,0.12); border-color: var(--gold);  color: var(--gold); }
+.alert-warning { background: rgba(230,126,34,0.12); border-color: #e67e22;      color: #f0a060; }
+
+
+/* ── 6. BUTTONS ───────────────────────────────────────────── */
+/*
+ * Base .btn class shared by all button variants.
+ * Variants add their own background/border/colour on top.
+ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Gold filled — primary action */
+.btn-primary { background: var(--gold); color: var(--black); padding: 13px 30px; }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+/* Outlined — secondary action */
+.btn-ghost { background: transparent; color: var(--cream); border: 1px solid var(--border); padding: 13px 30px; }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Red outlined — destructive action (cancel) */
+.btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(192,57,43,0.4); padding: 7px 16px; font-size: 0.75rem; }
+.btn-danger:hover { background: rgba(192,57,43,0.1); }
+
+.btn-sm   { padding: 7px 16px; font-size: 0.75rem; }
+.btn-full { width: 100%; }
+
+
+/* ── 7. FORMS ─────────────────────────────────────────────── */
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+
+.form-label {
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/*
+ * All form inputs share the same base styles.
+ * :focus changes border to gold — visual feedback for active field.
+ */
+.form-control,
+input[type=text], input[type=email], input[type=password],
+input[type=tel], input[type=date], select, textarea {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--cream);
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color var(--transition);
+  width: 100%;
+}
+.form-control:focus,
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+input::placeholder, textarea::placeholder { color: #444; }
+textarea { resize: vertical; min-height: 90px; }
+select { cursor: pointer; }
+/* Darken the browser date picker icon to match dark theme */
+input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+
+/* Two-column form grid — collapses to one column on mobile */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-grid .full { grid-column: 1 / -1; } /* spans both columns */
+.form-error { font-size: 0.78rem; color: var(--red); }
+
+
+/* ── 8. PAGE HEADER ───────────────────────────────────────── */
+/* Reused on services, my_bookings, barber_schedule pages */
+.page-header { padding: 3.5rem 4rem 2.5rem; border-bottom: 1px solid var(--border); }
+
+/* Gold line before the eyebrow text via CSS ::before pseudo-element */
+.page-header-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-header-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+
+.page-header h1 {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(2rem, 4vw, 3.5rem); /* responsive font size */
+  letter-spacing: 3px;
+}
+.page-header h1 .accent { color: var(--gold); }
+.page-header p { color: var(--muted); margin-top: 0.6rem; font-size: 0.9rem; }
+
+
+/* ── 9. STATUS BADGES ─────────────────────────────────────── */
+/* Small pill-shaped chips showing booking status */
+.badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.badge-confirmed { background: rgba(39,174,96,0.12);  color: var(--green); border: 1px solid rgba(39,174,96,0.3); }
+.badge-pending   { background: rgba(201,168,76,0.1);  color: var(--gold);  border: 1px solid rgba(201,168,76,0.3); }
+.badge-cancelled { background: rgba(192,57,43,0.1);   color: var(--red);   border: 1px solid rgba(192,57,43,0.3); }
+.badge-completed { background: rgba(100,100,100,0.1); color: #888;         border: 1px solid #333; }
+
+
+/* ── 10. HOME — HERO ──────────────────────────────────────── */
+/*
+ * Two-column CSS grid layout.
+ * Left: text content. Right: barber pole visual.
+ * On mobile (< 900px) the right column is hidden entirely.
+ * min-height: calc ensures the hero fills the visible viewport
+ * below the sticky nav bar.
+ */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - var(--nav-height));
+  overflow: hidden;
+}
+
+.hero-left { padding: 6rem 5rem 4rem; display: flex; flex-direction: column; justify-content: center; }
+
+/* Eyebrow text with gold decorative line via ::before */
+.hero-eyebrow {
+  font-size: 0.72rem; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--gold); display: block; }
+
+/*
+ * clamp(min, preferred, max) — responsive font size.
+ * Scales between 4.5rem and 7.5rem based on viewport width.
+ */
+.hero-title { font-family: 'Bebas Neue', cursive; font-size: clamp(4.5rem, 8vw, 7.5rem); line-height: 0.9; letter-spacing: 2px; margin-bottom: 1.5rem; }
+/* <em> inside hero title uses Playfair Display italic for typographic contrast */
+.hero-title em { font-family: 'Playfair Display', serif; font-style: italic; color: var(--gold); font-size: 0.82em; }
+.hero-sub { color: var(--muted); font-size: 1rem; line-height: 1.75; max-width: 380px; margin-bottom: 2.5rem; font-weight: 300; }
+.hero-actions { display: flex; gap: 1rem; }
+.hero-stats { display: flex; gap: 2.5rem; margin-top: 4rem; }
+.stat-num { font-family: 'Bebas Neue', cursive; font-size: 2.2rem; color: var(--gold); letter-spacing: 2px; line-height: 1; }
+.stat-label { font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+/* Right column — decorative background with diagonal stripe pattern */
+.hero-right { background: var(--dark); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.hero-right::before {
+  content: '';
+  position: absolute; inset: 0;
+  /* Subtle repeating diagonal lines using gradient */
+  background: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(201,168,76,0.02) 40px, rgba(201,168,76,0.02) 41px);
+}
+
+/*
+ * Barber pole — animated with poleSpin CSS keyframe.
+ * Uses repeating-linear-gradient to create the stripe pattern.
+ * background-size must match the animation end position.
+ */
+.barber-pole {
+  width: 58px; height: 380px; border-radius: 29px;
+  background: repeating-linear-gradient(135deg, #fff 0, #fff 18px, #c0392b 18px, #c0392b 36px, #00448e 36px, #00448e 54px);
+  background-size: 76px 76px;
+  box-shadow: 0 0 60px rgba(201,168,76,0.12), 0 20px 60px rgba(0,0,0,0.5);
+  animation: poleSpin 5s linear infinite; /* continuous rotation effect */
+  position: relative; z-index: 1;
+}
+
+/* Opening hours badge overlaid on hero right column */
+.hero-badge { position: absolute; top: 2.5rem; right: 2.5rem; border: 1px solid var(--border); padding: 1.2rem 1.5rem; border-radius: var(--radius); text-align: center; background: rgba(13,13,13,0.85); backdrop-filter: blur(6px); z-index: 1; }
+.badge-days  { font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 2px; color: var(--gold); }
+.badge-time  { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.badge-closed { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--red); margin-top: 8px; }
+
+
+/* ── 11. HOME — ABOUT STRIP ───────────────────────────────── */
+/* Four equal-width cells in a CSS grid row */
+.about-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--border); }
+.about-cell { padding: 2.5rem 2rem; border-right: 1px solid var(--border); transition: background var(--transition); }
+.about-cell:last-child { border-right: none; }
+.about-cell:hover { background: var(--dark); }
+.about-cell-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+.about-cell-title { font-family: 'Bebas Neue', cursive; font-size: 1rem; letter-spacing: 2px; margin-bottom: 0.4rem; }
+.about-cell-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+
+/* ── 12. SERVICES PAGE ────────────────────────────────────── */
+/*
+ * CSS grid with auto-fill — creates as many columns as fit,
+ * each at least 290px wide. Automatically responsive.
+ * The 1px gap with background: var(--border) creates grid lines
+ * between cards (the gap itself IS the border colour).
+ */
+.services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1px; background: var(--border); }
+
+.service-card { background: var(--dark); padding: 2.5rem; position: relative; overflow: hidden; transition: background var(--transition); }
+/*
+ * Bottom border reveal on hover — uses ::after pseudo-element.
+ * width animates from 0 to 100% on hover creating a sliding effect.
+ */
+.service-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--gold); transition: width 0.35s ease; }
+.service-card:hover { background: #181818; }
+.service-card:hover::after { width: 100%; }
+
+.service-card-name { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 0.6rem; }
+.service-card-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.8rem; }
+.service-card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+.service-card-price { font-family: 'Bebas Neue', cursive; font-size: 2.2rem; color: var(--gold); line-height: 1; }
+.service-card-duration { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.service-card-cta { margin-top: 1.5rem; }
+
+
+/* ── 13. BOOKING WIZARD ───────────────────────────────────── */
+/* Main content container — centred with max-width */
+.booking-layout { max-width: 860px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+/* Step progress indicator */
+.step-progress { display: flex; align-items: center; justify-content: center; margin-bottom: 3.5rem; }
+.step-item { display: flex; align-items: center; gap: 10px; }
+.step-bubble { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--muted); transition: all 0.3s; flex-shrink: 0; }
+.step-item.active .step-bubble { background: var(--gold); border-color: var(--gold); color: var(--black); font-weight: 700; }
+.step-item.done   .step-bubble { border-color: var(--gold); color: var(--gold); }
+.step-text { font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.step-item.active .step-text { color: var(--cream); }
+/* Horizontal line between step bubbles */
+.step-connector { flex: 1; max-width: 70px; height: 1px; background: var(--border); margin: 0 0.8rem; }
+
+.step-heading { font-family: 'Bebas Neue', cursive; font-size: 2rem; letter-spacing: 3px; margin-bottom: 0.4rem; }
+.step-subheading { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+
+/* Service and barber pick cards */
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+.pick-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; cursor: pointer; transition: all 0.18s; background: var(--dark); user-select: none; display: block; }
+.pick-card:hover { border-color: var(--gold); }
+.pick-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.07); }
+.pick-card-name { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 1.5px; margin-bottom: 3px; }
+.pick-card-sub  { font-size: 0.78rem; color: var(--muted); }
+.pick-card-price { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; color: var(--gold); margin-top: 8px; }
+
+/* Barber pick cards (centred layout with avatar) */
+.barber-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+.barber-pick-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1rem; cursor: pointer; transition: all 0.18s; background: var(--dark); text-align: center; user-select: none; display: block; }
+.barber-pick-card:hover { border-color: var(--gold); }
+.barber-pick-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.07); }
+.barber-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1rem; }
+.barber-pick-name { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 1.5px; margin-bottom: 3px; }
+.barber-pick-spec { font-size: 0.75rem; color: var(--muted); }
+
+/* Date/time step — two-column layout */
+.datetime-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+.dt-block-label { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+
+/* Time slot grid — flex wrap so slots flow naturally */
+.time-slot-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.time-slot { border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 13px; font-size: 0.82rem; cursor: pointer; transition: all 0.15s; user-select: none; background: var(--dark); }
+.time-slot:hover:not(.is-taken) { border-color: var(--gold); color: var(--gold); }
+/* Gold filled for selected slot */
+.time-slot.is-selected { background: var(--gold); border-color: var(--gold); color: var(--black); font-weight: 600; }
+/* Faded strikethrough for taken slots — pointer-events: none prevents clicking */
+.time-slot.is-taken { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; pointer-events: none; }
+.time-slot-hint { font-size: 0.82rem; color: var(--muted); font-style: italic; }
+
+/* Booking summary card — used on step 4 and confirmation page */
+.summary-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; }
+.summary-card-title { font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.summary-row:last-child { border-bottom: none; }
+.summary-row .key { color: var(--muted); }
+/* Total row has larger gold price display */
+.summary-row.total .val { color: var(--gold); font-family: 'Bebas Neue', cursive; font-size: 1.4rem; letter-spacing: 1px; }
+
+/* Step navigation bar at the bottom of each wizard step */
+.step-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+
+/* Confirmation page */
+.confirm-box { text-align: center; max-width: 480px; margin: 0 auto; padding: 3rem 0; }
+/* Green checkmark circle with bounce animation */
+.confirm-check { width: 80px; height: 80px; border-radius: 50%; background: rgba(39,174,96,0.12); border: 2px solid var(--green); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 2rem; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+.confirm-title { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 3px; margin-bottom: 0.5rem; }
+.confirm-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 2rem; }
+.confirm-ref { font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: 4px; color: var(--gold); background: var(--dark); border: 1px solid var(--border); padding: 12px 24px; border-radius: var(--radius); display: inline-block; margin-bottom: 2rem; }
+.confirm-actions { display: flex; gap: 12px; justify-content: center; }
+
+
+/* ── 14. MY BOOKINGS / BARBER SCHEDULE ────────────────────── */
+.bookings-wrap { max-width: 780px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+.bookings-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* Two-column grid: booking info left, action buttons right */
+.booking-card { background: var(--dark); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1.8rem; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; transition: border-color var(--transition); }
+.booking-card:hover { border-color: #333; }
+/* Cancelled bookings are faded out */
+.booking-card.is-cancelled { opacity: 0.45; }
+.booking-card-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.booking-card-service { font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 2px; }
+.booking-card-meta { display: flex; gap: 1.5rem; font-size: 0.82rem; color: var(--muted); flex-wrap: wrap; }
+.booking-card-ref { font-size: 0.68rem; letter-spacing: 1.5px; color: #444; margin-top: 6px; text-transform: uppercase; }
+.booking-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* Empty state — shown when no bookings exist */
+.empty-state { text-align: center; padding: 5rem 2rem; }
+.empty-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+.empty-state p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+
+/* ── 15. AUTH PAGES ───────────────────────────────────────── */
+/* Full-height centred layout for login and register */
+.auth-wrap { min-height: calc(100vh - var(--nav-height)); display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+.auth-card { background: var(--dark); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; width: 100%; max-width: 440px; animation: fadeUp 0.4s ease both; }
+.auth-logo { font-family: 'Bebas Neue', cursive; font-size: 1.4rem; letter-spacing: 3px; color: var(--gold); margin-bottom: 2rem; text-align: center; }
+.auth-logo span { color: var(--cream); }
+.auth-title { font-family: 'Bebas Neue', cursive; font-size: 1.8rem; letter-spacing: 3px; margin-bottom: 0.3rem; }
+.auth-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+.auth-form { display: flex; flex-direction: column; gap: 1rem; }
+.auth-divider { text-align: center; font-size: 0.82rem; color: var(--muted); margin-top: 1.5rem; }
+.auth-divider a { color: var(--gold); text-decoration: underline; }
+
+
+/* ── 16. FOOTER ───────────────────────────────────────────── */
+.footer { border-top: 1px solid var(--border); padding: 2.5rem 4rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.footer-logo { font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: 3px; color: var(--gold); }
+.footer-logo span { color: var(--cream); }
+.footer-copy { font-size: 0.78rem; color: var(--muted); }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { font-size: 0.78rem; color: var(--muted); letter-spacing: 1px; transition: color var(--transition); }
+.footer-links a:hover { color: var(--cream); }
+
+
+/* ── 17. RESPONSIVE ───────────────────────────────────────── */
+/*
+ * 900px breakpoint — tablet and smaller:
+ * - Hero collapses to single column, right panel hidden
+ * - About strip becomes 2 columns
+ * - Form grids go single column
+ * - Footer stacks vertically
+ */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-right { display: none; } /* hide decorative barber pole on small screens */
+  .hero-left { padding: 3.5rem 2rem 3rem; }
+  .about-strip { grid-template-columns: 1fr 1fr; }
+  .page-header { padding: 2.5rem 1.5rem 1.5rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .datetime-row { grid-template-columns: 1fr; }
+  .footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+}
+
+/*
+ * 600px breakpoint — mobile phones:
+ * - Nav padding tightened
+ * - About strip goes single column
+ * - Booking cards go single column
+ * - Step text labels hidden (only bubbles show)
+ * - Step connectors shrink
+ * - Messages stack edge-to-edge
+ */
+@media (max-width: 600px) {
+  .nav { padding: 0 1.2rem; }
+  .nav-links { gap: 1rem; }
+  .about-strip { grid-template-columns: 1fr; }
+  .about-cell { border-right: none; border-top: 1px solid var(--border); }
+  .about-cell:first-child { border-top: none; }
+  .booking-card { grid-template-columns: 1fr; }
+  .step-text { display: none; } /* save space on narrow screens */
+  .step-connector { max-width: 30px; }
+  .messages-container { right: 0.5rem; left: 0.5rem; max-width: 100%; }
+}
