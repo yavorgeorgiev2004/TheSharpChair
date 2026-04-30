@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}The Sharp Chair — Premium Barber Shop{% endblock %}
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════════════════════
+     HERO SECTION
+     Two-column CSS grid layout:
+       Left  → text content, CTA buttons, stats
+       Right → animated barber pole visual (hidden on mobile via CSS)
+     Animation classes (fade-up, fade-up-1 etc.) are defined in
+     style.css and trigger CSS keyframe animations on page load.
+     ══════════════════════════════════════════════════════════════════ -->
+<section class="hero">
+
+  <!-- Left column — all text content -->
+  <div class="hero-left">
+
+    <!-- Eyebrow text — small decorative label above the main title -->
+    <p class="hero-eyebrow fade-up">Est. 2009 &middot; Wolverhampton, England</p>
+
+    <!--
+      Main headline using Bebas Neue display font.
+      The <em> tag uses Playfair Display italic for the word "Chair"
+      creating a typographic contrast between the two fonts.
+    -->
+    <h1 class="hero-title fade-up fade-up-1">THE<br>SHARP<br><em>Chair</em></h1>
+
+    <p class="hero-sub fade-up fade-up-2">
+      Precision cuts, classic shaves, and modern styles — all by
+      appointment. No waiting, no walk-ins. Just results.
+    </p>
+
+    <!-- CTA buttons — Book Now goes to step 1 of the booking wizard -->
+    <div class="hero-actions fade-up fade-up-3">
+      <a href="{% url 'book_step1' %}" class="btn btn-primary">Book Appointment</a>
+      <a href="{% url 'services' %}" class="btn btn-ghost">View Services</a>
+    </div>
+
+    <!-- Stats row — barber count is live from the database context variable -->
+    <div class="hero-stats fade-up fade-up-4">
+      <div>
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Years Open</div>
+      </div>
+      <div>
+        <!--
+          {{ barbers.count }} calls .count() on the QuerySet.
+          Django generates: SELECT COUNT(*) FROM bookings_barber WHERE is_available=True
+          Updates automatically when barbers are added or set unavailable.
+        -->
+        <div class="stat-num">{{ barbers.count }}</div>
+        <div class="stat-label">Expert Barbers</div>
+      </div>
+      <div>
+        <div class="stat-num">Mon–Fri</div>
+        <div class="stat-label">8am – 8pm</div>
+      </div>
+    </div>
+
+  </div><!-- /hero-left -->
+
+  <!-- Right column — decorative visual, hidden on mobile (CSS media query) -->
+  <div class="hero-right">
+    <!--
+      Animated barber pole — pure CSS animation defined in style.css.
+      Uses background-position animation (poleSpin keyframe) to create
+      the illusion of a spinning striped cylinder.
+    -->
+    <div class="barber-pole"></div>
+
+    <!-- Opening hours badge overlaid on the hero right column -->
+    <div class="hero-badge">
+      <div class="badge-days">MON — FRI</div>
+      <div class="badge-time">8:00 AM – 8:00 PM</div>
+      <div class="badge-closed">Sat &amp; Sun Closed</div>
+    </div>
+  </div><!-- /hero-right -->
+
+</section><!-- /hero -->
+
+<!-- ══════════════════════════════════════════════════════════════════
+     ABOUT STRIP
+     Four equal-width cells in a CSS grid row.
+     On mobile (< 600px) these stack into a single column via
+     the @media query in style.css.
+     ══════════════════════════════════════════════════════════════════ -->
+<section class="about-strip">
+  <div class="about-cell">
+    <div class="about-cell-icon">✂️</div>
+    <div class="about-cell-title">Precision Cutting</div>
+    <div class="about-cell-desc">Every cut tailored to your face shape, hair texture, and lifestyle.</div>
+  </div>
+  <div class="about-cell">
+    <div class="about-cell-icon">📅</div>
+    <div class="about-cell-title">Easy Booking</div>
+    <div class="about-cell-desc">Choose your barber, pick your slot, arrive on time. Zero waiting.</div>
+  </div>
+  <div class="about-cell">
+    <div class="about-cell-icon">🪒</div>
+    <div class="about-cell-title">Classic Shaves</div>
+    <div class="about-cell-desc">Traditional straight-razor hot towel shaves using premium products.</div>
+  </div>
+  <div class="about-cell">
+    <div class="about-cell-icon">💈</div>
+    <!--
+      Live barber count injected from the context variable.
+      {{ barbers.count }} → e.g. "3 Expert Barbers"
+    -->
+    <div class="about-cell-title">{{ barbers.count }} Expert Barbers</div>
+    <div class="about-cell-desc">Each with a distinct speciality and years of experience.</div>
+  </div>
+</section>
+
+{% endblock %}
