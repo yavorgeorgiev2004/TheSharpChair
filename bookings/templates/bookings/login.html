@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Sign In — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+
+    <!-- Decorative logo inside the card -->
+    <div class="auth-logo">THE <span>SHARP</span> CHAIR</div>
+
+    <h1 class="auth-title">SIGN IN</h1>
+    <p class="auth-sub">Access your bookings and manage appointments.</p>
+
+    <!--
+      method="POST" — form data sent in request body, not URL.
+      action is omitted — submits to the same URL (/login/) by default.
+      Django's login_view() handles both GET (show form) and POST (process).
+    -->
+    <form method="POST" class="auth-form">
+      {% csrf_token %}<!-- Required on ALL POST forms — CSRF protection -->
+
+      <!--
+        Loop over form fields — renders label + input + errors for each.
+        AuthenticationForm has two fields: username and password.
+        Django automatically renders password as type="password".
+      -->
+      {% for field in form %}
+        <div class="form-group">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}<!-- renders the <input> element with correct type/name/id -->
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <span class="form-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!--
+        non_field_errors are errors not tied to a specific field.
+        AuthenticationForm uses this for "Invalid username or password".
+      -->
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+    </form>
+
+    <!-- Link to registration page for new users -->
+    <div class="auth-divider">
+      Don't have an account? <a href="{% url 'register' %}">Create one</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
