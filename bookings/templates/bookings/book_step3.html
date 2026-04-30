@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}Book — Date & Time — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout">
+
+  {% include 'bookings/partials/step_progress.html' with step=3 %}
+
+  <h2 class="step-heading">DATE &amp; TIME</h2>
+  <p class="step-subheading">Open Monday–Friday, 8:00am–8:00pm. Weekends closed.</p>
+
+  <form method="POST" id="datetime-form">
+    {% csrf_token %}
+
+    <div class="datetime-row">
+
+      <!-- Date picker column -->
+      <div>
+        <div class="dt-block-label">Select Date</div>
+        <!--
+          type="date" renders a native browser date picker.
+          min="{{ today|date:'Y-m-d' }}" prevents past dates from being selected
+          in the browser UI (server-side validation in forms.py also rejects them).
+          onchange="fetchSlots()" triggers the AJAX call when date changes.
+        -->
+        <input type="date"
+               class="form-control"
+               id="booking-date"
+               name="date"
+               value="{{ form.date.value|default:'' }}"
+               onchange="fetchSlots()">
+
+        {% if form.date.errors %}
+          <span class="form-error">{{ form.date.errors }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Time slot column — populated by JavaScript via AJAX -->
+      <div>
+        <div class="dt-block-label">Available Times</div>
+        <!--
+          Initial state: "Pick a date first" hint.
+          JavaScript replaces this content when fetchSlots() runs.
+          If date already chosen (e.g. back button), slots are pre-rendered
+          by the view and available in the 'slots' context variable.
+        -->
+        <div class="time-slot-grid" id="time-slots">
+          {% if slots %}
+            <!--
+              Pre-render slots from server-side context (e.g. after back button).
+              Same HTML structure as JavaScript generates for consistency.
+            -->
+            {% for slot in slots %}
+              <div class="time-slot" onclick="selectSlot(this, '{{ slot|time:"H:i:s" }}')">
+                {{ slot|time:"H:i" }}
+              </div>
+            {% endfor %}
+          {% else %}
+            <span class="time-slot-hint">Pick a date first</span>
+          {% endif %}
+        </div>
+      </div>
+
+    </div><!-- /datetime-row -->
+
+    <!--
+      Hidden input stores the selected time slot value.
+      selectSlot() JavaScript function populates this when a slot is clicked.
+      The value format is 'HH:MM:SS' to match Python's time string format.
+      This is what gets submitted with the form and read by the view.
+    -->
+    <input type="hidden"
+           name="start_time"
+           id="selected-time"
+           value="{{ form.start_time.value|default:'' }}">
+
+    <!-- Cross-field errors (e.g. no time slot selected) -->
+    {% if form.non_field_errors %}
+      <div class="alert alert-error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- Summary of selections so far -->
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1rem 1.5rem; margin-bottom:1.5rem;">
+      <div style="font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem;">Your Selection</div>
+      <div style="font-size:0.9rem;">
+        Service: <strong>{{ service.name }}</strong>
+        &nbsp;|&nbsp;
+        Barber: <strong>{{ barber }}</strong>
+        &nbsp;|&nbsp;
+        Duration: <strong>{{ service.duration_mins }} min</strong>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <a href="{% url 'book_step2' %}" class="btn btn-ghost">← Back</a>
+      <button type="submit" class="btn btn-primary">Continue →</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /*
+   * Django template variables injected as JavaScript constants.
+   * These are needed in the AJAX request URL.
+   * {{ barber.id }} and {{ service.id }} are replaced with real numbers
+   * by Django before the page is sent to the browser.
+   */
+  const BARBER_ID  = {{ barber.id }};
+  const SERVICE_ID = {{ service.id }};
+
+  /*
+   * fetchSlots()
+   * Called when the user changes the date input.
+   * Makes an AJAX GET request to /ajax/slots/ and renders results.
+   *
+   * URL structure: /ajax/slots/?barber_id=1&service_id=2&date=2025-06-10
+   * The ? introduces query parameters — Django reads them with request.GET.get()
+   *
+   * fetch() is the modern browser API for HTTP requests.
+   * .then(r => r.json()) parses the JSON response body.
+   * .then(data => ...) processes the parsed data object.
+   */
+  function fetchSlots() {
+    const dateVal   = document.getElementById('booking-date').value;
+    if (!dateVal) return; // guard: do nothing if date is empty
+
+    const container = document.getElementById('time-slots');
+    container.innerHTML = '<span class="time-slot-hint">Loading...</span>';
+
+    // Build the AJAX URL with query parameters
+    fetch(`/ajax/slots/?barber_id=${BARBER_ID}&service_id=${SERVICE_ID}&date=${dateVal}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) {
+          // Server returned an error (e.g. weekend selected)
+          container.innerHTML = `<span class="time-slot-hint" style="color:var(--red)">${data.error}</span>`;
+          return;
+        }
+        if (data.slots.length === 0) {
+          // No available slots for this date/barber combination
+          container.innerHTML = '<span class="time-slot-hint">No slots available on this date. Try another day.</span>';
+          return;
+        }
+
+        // Get currently selected time (for re-highlighting after fetch)
+        const currentSelected = document.getElementById('selected-time').value;
+
+        /*
+         * Render each slot as a clickable div.
+         * data.slots is an array of 'HH:MM' strings from the JSON response.
+         * timeVal appends ':00' to create 'HH:MM:SS' for the hidden input.
+         * .map() creates an array of HTML strings, .join('') concatenates them.
+         */
+        container.innerHTML = data.slots.map(s => {
+          const timeVal = s + ':00';
+          const active  = currentSelected === timeVal ? 'is-selected' : '';
+          return `<div class="time-slot ${active}" onclick="selectSlot(this, '${timeVal}')">${s}</div>`;
+        }).join('');
+      })
+      .catch(() => {
+        // Network error or unexpected server error
+        container.innerHTML = '<span class="time-slot-hint" style="color:var(--red)">Could not load slots. Please try again.</span>';
+      });
+  }
+
+  /*
+   * selectSlot(el, val)
+   * Called when a time slot div is clicked.
+   * Highlights the selected slot and stores the time value in the
+   * hidden input so it is submitted with the form.
+   *
+   * el  → the clicked .time-slot element
+   * val → time string in 'HH:MM:SS' format
+   */
+  function selectSlot(el, val) {
+    // Remove selection from all slots
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('is-selected'));
+    // Highlight the clicked slot
+    el.classList.add('is-selected');
+    // Store value in hidden input for form submission
+    document.getElementById('selected-time').value = val;
+  }
+
+  /*
+   * Auto-fetch slots if a date is already set (e.g. after browser back button).
+   * Runs immediately when the page loads.
+   */
+  const existingDate = document.getElementById('booking-date').value;
+  if (existingDate) fetchSlots();
+</script>
+{% endblock %}
