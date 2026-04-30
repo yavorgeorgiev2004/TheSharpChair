@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}My Bookings — The Sharp Chair{% endblock %}
+{% block content %}
+
+<header class="page-header fade-up">
+  <div class="page-header-eyebrow">Your Account</div>
+  <h1>MY <span class="accent">BOOKINGS</span></h1>
+  <p>View, edit, or cancel your upcoming and past appointments.</p>
+</header>
+
+<div class="bookings-wrap">
+
+  <!--
+    if bookings  — evaluates the QuerySet.
+    A non-empty QuerySet is truthy; empty QuerySet is falsy.
+    Django does NOT execute the database query just for this check —
+    the QuerySet is evaluated lazily when first iterated.
+  -->
+  {% if bookings %}
+    <div class="bookings-list">
+
+      {% for booking in bookings %}
+      <!--
+        is-cancelled CSS class reduces opacity for cancelled bookings.
+        Applied conditionally using Django's template if tag inline.
+      -->
+      <div class="booking-card {% if booking.status == 'cancelled' %}is-cancelled{% endif %}">
+
+        <div>
+          <!-- Top row: service name + status badge -->
+          <div class="booking-card-top">
+            <div class="booking-card-service">{{ booking.service.name }}</div>
+
+            <!--
+              Status badge logic — three states:
+              1. Cancelled → red badge
+              2. Past date → grey "Past" badge (date comparison with today context var)
+              3. Active    → green "Confirmed" badge
+            -->
+            {% if booking.status == 'cancelled' %}
+              <span class="badge badge-cancelled">Cancelled</span>
+            {% elif booking.date < today %}
+              <span class="badge badge-completed">Past</span>
+            {% else %}
+              <span class="badge badge-confirmed">{{ booking.get_status_display }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Booking metadata row -->
+          <div class="booking-card-meta">
+            <!--
+              date filter: "D, j M Y" → "Mon, 5 Jan 2025"
+                D = abbreviated weekday, j = day, M = abbreviated month, Y = year
+            -->
+            <span>📅 {{ booking.date|date:"D, j M Y" }}</span>
+            <!-- time filter: "H:i" → "09:30" -->
+            <span>🕐 {{ booking.start_time|time:"H:i" }}</span>
+            <!-- Calls Barber.__str__() → user.get_full_name() -->
+            <span>💈 {{ booking.barber }}</span>
+            <span>£{{ booking.service.price }}</span>
+          </div>
+
+          <!--
+            Notes section — only rendered if notes is not empty.
+           booking.notes  would render an empty string if blank,
+            but the  if  prevents the entire div from appearing.
+          -->
+          {% if booking.notes %}
+            <div style="margin-top:8px; font-size:0.8rem; color:var(--muted);">
+              📝 {{ booking.notes }}
+            </div>
+          {% endif %}
+
+          <!-- Reference number — auto-generated in Booking.save() -->
+          <div class="booking-card-ref">REF: #{{ booking.ref }}</div>
+        </div>
+
+        <!-- Action buttons — only for active future bookings -->
+        <div class="booking-card-actions">
+          <!--
+            Show edit/cancel only if:
+            - Booking is NOT cancelled
+            - Booking is NOT completed
+            Past bookings (date < today) are left showing for history
+            but without action buttons.
+          -->
+          {% if booking.status != 'cancelled' and booking.status != 'completed' %}
+            <!--
+              {% url 'edit_booking' booking.id %} generates:
+              /my-bookings/edit/42/  (where 42 is booking.id)
+              The booking.id is passed as the <int:booking_id> URL parameter.
+            -->
+            <a href="{% url 'edit_booking' booking.id %}" class="btn btn-ghost btn-sm">Edit</a>
+            <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-danger btn-sm">Cancel</a>
+          {% endif %}
+        </div>
+
+      </div><!-- /booking-card -->
+      {% endfor %}
+
+    </div><!-- /bookings-list -->
+
+  {% else %}
+    <!-- Empty state — shown when customer has no bookings yet -->
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <p>You haven't made any bookings yet.</p>
+      <a href="{% url 'book_step1' %}" class="btn btn-primary">Book Your First Appointment</a>
+    </div>
+  {% endif %}
+
+</div><!-- /bookings-wrap -->
+{% endblock %}
