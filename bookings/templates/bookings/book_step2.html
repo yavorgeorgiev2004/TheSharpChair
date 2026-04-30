@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Book — Choose Barber — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout">
+
+  {% include 'bookings/partials/step_progress.html' with step=2 %}
+
+  <h2 class="step-heading">CHOOSE YOUR BARBER</h2>
+  <p class="step-subheading">All barbers are fully qualified. Any preference?</p>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="barber-pick-grid">
+      {% for barber in barbers %}
+      <label class="barber-pick-card" for="id_barber_{{ forloop.counter }}">
+
+        <!-- Decorative avatar emoji — could be replaced with a profile photo -->
+        <div class="barber-avatar">✂️</div>
+
+        <!--
+          barber.user.get_full_name() calls the method on the linked
+          User object. Returns "First Last" format.
+          select_related in the view means this does NOT trigger
+          an extra database query per barber.
+        -->
+        <div class="barber-pick-name">{{ barber.user.get_full_name }}</div>
+        <div class="barber-pick-spec">{{ barber.speciality }}</div>
+
+        <!-- Hidden radio — same pattern as step 1 -->
+        <input type="radio"
+               name="barber"
+               id="id_barber_{{ forloop.counter }}"
+               value="{{ barber.id }}"
+               style="display:none;"
+               {% if form.barber.value == barber.id|stringformat:'s' %}checked{% endif %}>
+      </label>
+      {% endfor %}
+    </div>
+
+    {% if form.barber.errors %}
+      <div class="alert alert-error">{{ form.barber.errors }}</div>
+    {% endif %}
+
+    <div class="step-nav">
+      <!-- Back link goes to step 1 to re-choose service if needed -->
+      <a href="{% url 'book_step1' %}" class="btn btn-ghost">← Back</a>
+      <button type="submit" class="btn btn-primary">Continue →</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /* Same card selection pattern as step 1 — visual highlight only */
+  document.querySelectorAll('.barber-pick-card').forEach(card => {
+    const radio = card.querySelector('input[type=radio]');
+    if (radio && radio.checked) card.classList.add('selected');
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.barber-pick-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      if (radio) radio.checked = true;
+    });
+  });
+</script>
+{% endblock %}
