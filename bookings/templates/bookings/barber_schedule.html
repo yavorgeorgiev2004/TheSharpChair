@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}My Schedule — The Sharp Chair{% endblock %}
+
+{% block content %}
+
+<header class="page-header fade-up">
+  <div class="page-header-eyebrow">Barber Dashboard</div>
+  <h1>MY <span class="accent">SCHEDULE</span></h1>
+  <!--
+    {{ request.user.first_name }} accesses the logged-in barber's first name.
+    Available in all templates via the auth context processor in settings.py.
+  -->
+  <p>Your upcoming confirmed appointments, {{ request.user.first_name }}.</p>
+</header>
+
+<div class="bookings-wrap">
+
+  {% if bookings %}
+    <div class="bookings-list">
+
+      {% for booking in bookings %}
+      <div class="booking-card">
+        <div>
+          <div class="booking-card-top">
+            <!--
+              Shows customer name instead of service name (unlike my_bookings.html).
+              booking.customer is a FK to auth_user.
+              .get_full_name() returns "First Last" from the User record.
+              select_related('customer') in the view means this doesn't
+              trigger an extra database query per booking.
+            -->
+            <div class="booking-card-service">{{ booking.customer.get_full_name }}</div>
+            <span class="badge badge-{{ booking.status }}">{{ booking.get_status_display }}</span>
+          </div>
+
+          <div class="booking-card-meta">
+            <!-- Date formatted as abbreviated weekday, day, month, year -->
+            <span>📅 {{ booking.date|date:"D, j M Y" }}</span>
+            <!--
+              Shows BOTH start and end time — barbers need to know
+              how long each appointment runs to plan their day.
+              end_time is calculated in Booking._calculate_end_time()
+              from start_time + service.duration_mins.
+            -->
+            <span>🕐 {{ booking.start_time|time:"H:i" }} – {{ booking.end_time|time:"H:i" }}</span>
+            <span>✂️ {{ booking.service.name }}</span>
+            <span>£{{ booking.service.price }}</span>
+          </div>
+
+          <!-- Customer notes — shown so barber knows any special requests -->
+          {% if booking.notes %}
+            <div style="margin-top:8px; font-size:0.8rem; color:var(--muted);">
+              📝 {{ booking.notes }}
+            </div>
+          {% endif %}
+
+          <!--
+            Customer contact details — only shown to barbers, not customers.
+            booking.customer.email accesses the email field on auth_user
+            via the customer FK. Available because of select_related in view.
+          -->
+          <div class="booking-card-ref">
+            REF: #{{ booking.ref }}
+            &nbsp;|&nbsp;
+            {{ booking.customer.email }}
+          </div>
+        </div>
+
+        <!-- Cancel button — barber can cancel bookings on their schedule -->
+        <div class="booking-card-actions">
+          <!--
+            Links to cancel_booking view with this booking's ID.
+            views.cancel_booking() checks that the user is the assigned
+            barber before allowing the cancellation.
+            After cancel, barber is redirected back to /schedule/.
+          -->
+          <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-danger btn-sm">Cancel</a>
+        </div>
+
+      </div><!-- /booking-card -->
+      {% endfor %}
+
+    </div><!-- /bookings-list -->
+
+  {% else %}
+    <!-- Empty state — shown when barber has no upcoming appointments -->
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <p>No upcoming appointments scheduled.</p>
+      <p style="font-size:0.85rem; margin-top:0.5rem;">
+        Appointments will appear here when customers book with you.
+      </p>
+    </div>
+  {% endif %}
+
+</div><!-- /bookings-wrap -->
+{% endblock %}
