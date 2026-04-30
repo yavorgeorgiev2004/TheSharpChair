@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Booking Confirmed — The Sharp Chair{% endblock %}
+{% block content %}
+<div class="booking-layout">
+  <div class="confirm-box">
+
+    <!-- Animated green checkmark circle -->
+    <div class="confirm-check">✓</div>
+
+    <h2 class="confirm-title">BOOKING CONFIRMED!</h2>
+    <p class="confirm-sub">
+      Your appointment is locked in. We look forward to seeing you at the shop.
+    </p>
+
+    <!-- Unique booking reference — generated in Booking.save() -->
+    <div class="confirm-ref">REF: #{{ booking.ref }}</div>
+
+    <!-- Appointment detail summary -->
+    <div class="summary-card" style="text-align:left; margin-bottom:2rem;">
+      <div class="summary-card-title">Appointment Details</div>
+      <div class="summary-row"><span class="key">Service</span><span class="val">{{ booking.service.name }}</span></div>
+      <div class="summary-row"><span class="key">Barber</span><span class="val">{{ booking.barber }}</span></div>
+      <!-- date filter: "l, j F Y" → "Monday, 5 January 2025" -->
+      <div class="summary-row"><span class="key">Date</span><span class="val">{{ booking.date|date:"l, j F Y" }}</span></div>
+      <!-- time filter: "H:i" → "09:30" -->
+      <div class="summary-row"><span class="key">Time</span><span class="val">{{ booking.start_time|time:"H:i" }}</span></div>
+      <div class="summary-row total"><span class="key">Total</span><span class="val">£{{ booking.service.price }}</span></div>
+    </div>
+
+    <div class="confirm-actions">
+      <a href="{% url 'my_bookings' %}" class="btn btn-primary">View My Bookings</a>
+      <!-- Book Another starts the wizard fresh — step 1 clears session data -->
+      <a href="{% url 'book_step1' %}" class="btn btn-ghost">Book Another</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
