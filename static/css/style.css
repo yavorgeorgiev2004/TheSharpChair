@@ -267,6 +267,30 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cur
 .form-grid .full { grid-column: 1 / -1; }
 .form-error { font-size: 0.78rem; color: var(--red); }
 
+/* Help text below form fields — targets Django's auto-generated ul list */
+.field-help-text {
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* Style the ul list Django generates for password requirements */
+.field-help-text ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style: disc;
+}
+
+.field-help-text li {
+  margin-bottom: 2px;
+}
+
+/* Plain text help (non-list fields like username and password confirmation) */
+.field-help-text p,
+.field-help-text span {
+  margin: 0;
+}
 
 /* ── 8. PAGE HEADER ───────────────────────────────────────── */
 .page-header { padding: 3.5rem 4rem 2.5rem; border-bottom: 1px solid var(--border); overflow: hidden; }
