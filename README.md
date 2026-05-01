@@ -133,15 +133,15 @@ All colours are defined as CSS custom properties in `:root`. Changing a colour i
 │  SHARP                           │         │    │  (animated)   │
 │  Chair                           │         └────┘               │
 │                                  │                              │
-│  Precision cuts, classic shaves  │    ┌──────────────────┐     │
-│  and modern styles.              │    │ MON — FRI         │     │
-│                                  │    │ 8am — 8pm         │     │
-│  [BOOK APPOINTMENT] [SERVICES]   │    │ Sat & Sun Closed  │     │
-│                                  │    └──────────────────┘     │
+│  Precision cuts, classic shaves  │    ┌──────────────────┐      │
+│  and modern styles.              │    │ MON — FRI        │      │
+│                                  │    │ 8am — 8pm        │      │
+│  [BOOK APPOINTMENT] [SERVICES]   │    │ Sat & Sun Closed │      │
+│                                  │    └──────────────────┘      │
 │  15+ Years  3 Barbers  Mon–Fri   │                              │
 │                                  │                              │
 ├──────────────────────────────────┴──────────────────────────────┤
-│  ✂️ Precision   │  📅 Easy      │  🪒 Classic   │  💈 3 Expert  │
+│  ✂️ Precision   │  📅 Easy      │  🪒 Classic  │  💈 3 Expert  │
 │  Cutting        │  Booking      │  Shaves       │  Barbers      │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -152,22 +152,22 @@ All colours are defined as CSS custom properties in `:root`. Changing a colour i
 ┌─────────────────────────────────────────────────────────────────┐
 │ NAV                                                             │
 ├─────────────────────────────────────────────────────────────────┤
-│         ①Service ──── ②Barber ──── ③Date & Time ──── ④Confirm  │
+│         ①Service ──── ②Barber ──── ③Date & Time ──── ④Confirm   │
 │                                                                 │
 │  DATE & TIME                                                    │
-│  Open Monday–Friday 8am–8pm. Weekends closed.                  │
+│  Open Monday–Friday 8am–8pm. Weekends closed.                   │
 │                                                                 │
-│  ┌─────────────────────┐  ┌──────────────────────────────────┐ │
-│  │ SELECT DATE         │  │ AVAILABLE TIMES                  │ │
-│  │ [   date picker   ] │  │ [08:00] [08:30] [09:00] [09:30]  │ │
-│  │                     │  │ [10:00] [10:30] [11:00] [11:30]  │ │
-│  └─────────────────────┘  └──────────────────────────────────┘ │
+│  ┌─────────────────────┐  ┌──────────────────────────────────┐  │
+│  │ SELECT DATE         │  │ AVAILABLE TIMES                  │  │
+│  │ [   date picker   ] │  │ [08:00] [08:30] [09:00] [09:30]  │  │
+│  │                     │  │ [10:00] [10:30] [11:00] [11:30]  │  │
+│  └─────────────────────┘  └──────────────────────────────────┘  │
 │                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Service: Classic Haircut  │  Barber: James  │  30 min    │  │
-│  └──────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │ Service: Classic Haircut  │  Barber: James  │  30 min    │   │
+│  └──────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│  [← Back]                                      [Continue →]    │
+│  [← Back]                                      [Continue →]     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -179,17 +179,17 @@ All colours are defined as CSS custom properties in `:root`. Changing a colour i
 ├─────────────────────────────────────────────────────────────────┤
 │ MY BOOKINGS                                                     │
 │                                                                 │
-│ ┌─────────────────────────────────────────────────────────┐    │
-│ │ CLASSIC HAIRCUT                          [CONFIRMED]     │    │
-│ │ 📅 Mon, 5 Jan 2025  🕐 10:00  💈 James  £18             │    │
-│ │ REF: #SC3F7A9B2E                    [Edit] [Cancel]      │    │
-│ └─────────────────────────────────────────────────────────┘    │
+│ ┌─────────────────────────────────────────────────────────┐     │
+│ │ CLASSIC HAIRCUT                          [CONFIRMED]    │     │
+│ │ 📅 Mon, 5 Jan 2025  🕐 10:00  💈 James  £18            │     │
+│ │ REF: #SC3F7A9B2E                    [Edit] [Cancel]     │     │
+│ └─────────────────────────────────────────────────────────┘     │
 │                                                                 │
-│ ┌─────────────────────────────────────────────────────────┐    │
-│ │ FADE & BLEND                             [CANCELLED]     │    │
-│ │ 📅 Fri, 20 Dec 2024  🕐 14:00  💈 Marcus  £22           │    │
-│ │ REF: #SC7A2B9C1D                                         │    │
-│ └─────────────────────────────────────────────────────────┘    │
+│ ┌─────────────────────────────────────────────────────────┐     │
+│ │ FADE & BLEND                             [CANCELLED]    │     │
+│ │ 📅 Fri, 20 Dec 2024  🕐 14:00  💈 Marcus  £22          │     │
+│ │ REF: #SC7A2B9C1D                                        │     │
+│ └─────────────────────────────────────────────────────────┘     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -214,10 +214,10 @@ All colours are defined as CSS custom properties in `:root`. Changing a colour i
 │  15+ Years  3 Barbers  Mon–Fri  │
 │                                 │
 ├─────────────────┬───────────────┤
-│ ✂️ Precision    │ 📅 Easy Book  │
+│ ✂️ Precision    │ 📅 Easy Book │
 │ Cutting         │               │
 ├─────────────────┼───────────────┤
-│ 🪒 Classic      │ 💈 3 Barbers  │
+│ 🪒 Classic      │ 💈 3 Barbers │
 │ Shaves          │               │
 └─────────────────┴───────────────┘
 ```
