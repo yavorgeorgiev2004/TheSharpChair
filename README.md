@@ -537,6 +537,7 @@ Reference: Twelve-Factor App — Config — [https://12factor.net/config](https:
 ### 8.2 Potential Misuse and Threats
 
 Any online booking system that allows members of the public to create accounts and reserve time slots is vulnerable to several forms of misuse. The following threats were considered during development.
+
 **Concurrent booking race condition**
 
 If two users simultaneously attempt to book the same barber, date and time slot, there is a theoretical window between the Python overlap check passing and the database write completing where both could succeed. In practice this is prevented by the `UNIQUE(barber_id, date, start_time)` database constraint which will reject the second INSERT at the database level, returning an IntegrityError which is caught by the try/except in `book_step4()` and shown to the user as an error message. A future improvement would wrap the validation and save in `transaction.atomic()` to guarantee the check and write happen as a single atomic operation with no race condition window.
