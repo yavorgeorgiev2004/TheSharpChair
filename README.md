@@ -859,9 +859,23 @@ None of these warnings affect the appearance or functionality of the application
 ![Edit Booking validation](docs/validation/edit-validation.png)
 ![Cancel Booking validation](docs/validation/cancel-validation.png)
 ![Barber Schedule validation](docs/validation/schedule-validation.png)
+### 10.5 Python PEP8 Validation 
+
+All Python files were validated using the Code Institute PEP8 linter at [https://pep8ci.herokuapp.com](https://pep8ci.herokuapp.com). Several files initially returned E501 line too long errors and E251 unexpected spaces around keyword argument errors, all of which were fixed by splitting long lines across multiple lines and removing spaces around `=` in function call arguments. All files returned 0 errors after fixes were applied.
+
+| File | Errors Before | Errors After | Result |
+|---|---|---|---|
+| models.py | 1 | 0 | Pass |
+| views.py | 32 | 0 | Pass |
+| forms.py | 7 | 0 | Pass |
+| bookings/urls.py | 0 | 0 | Pass |
+| barbershop/urls.py | 0 | 0 | Pass |
+| admin.py | 2 | 0 | Pass |
+| settings.py | 4 | 0 | Pass |
+
 ### 10.5 Python PEP8 Validation Screenshots
 
-All Python files were validated using the Code Institute PEP8 linter at [https://pep8ci.herokuapp.com](https://pep8ci.herokuapp.com). All files returned 0 errors after fixes were applied.
+All seven Python files showing 0 errors in the CI PEP8 linter after fixes were applied.
 
 ![models.py validation](docs/validation/pep8-models.png)
 ![views.py validation](docs/validation/pep8-views.png)
@@ -870,7 +884,6 @@ All Python files were validated using the Code Institute PEP8 linter at [https:/
 ![barbershop/urls.py validation](docs/validation/pep8-barbershop-urls.png)
 ![admin.py validation](docs/validation/pep8-admin.png)
 ![settings.py validation](docs/validation/pep8-settings.png)
-
 ---
 
 ## 12. Bugs
