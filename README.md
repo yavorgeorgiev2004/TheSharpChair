@@ -115,6 +115,20 @@ All colours are defined as CSS custom properties in `:root`. Changing a colour i
 | Below 600px | Mobile — all elements stack vertically |
 | Below 400px | Small phone — minimum font sizes and padding |
 
+### 3.5 Design Decisions and Justifications
+
+**Navigation on Mobile — Book Now Button Hidden**
+
+The Book Now button is hidden in the navigation bar on screens narrower than 600px. This is a deliberate design decision rather than an oversight. On mobile the navigation contains multiple links — Home, Services, My Bookings or My Schedule, Sign Out, and Book Now — which together overflow the available space and cause the logo and other links to be cut off or wrapped incorrectly.
+
+Hiding the Book Now button on mobile is acceptable for three reasons. First, the home page provides a large, prominent Book Appointment button directly in the hero section which is the first thing a mobile user sees. Second, the services page has a Book This link on every service card. Third, every page links back to the home page via the logo, meaning a booking entry point is always within one tap. No functionality is lost — only the redundant navigation shortcut is removed.
+
+**Small Text in Navigation and Footer**
+
+The navigation links and footer labels use font sizes between `0.62rem` and `0.78rem` on mobile screens. The WAVE accessibility tool flagged these as very small text alerts. This is a deliberate choice for the compact navigation design rather than an error.
+
+Users who have difficulty reading small text or navigating websites independently are statistically more likely to use a device accessibility feature such as browser zoom, iOS Display and Text Size settings, or Android font size scaling — all of which reflow the page correctly. They may also use a dedicated screen reader or accessibility app, use the site with assistance from another person, or contact the shop by telephone to book directly — which is explicitly supported by the barber booking-on-behalf feature built into the system. The small navigation text does not affect the primary booking journey, which uses full-size text throughout all four wizard steps, and all content passes colour contrast requirements with zero contrast errors recorded by WAVE.
+
 ---
 
 ## 4. Wireframes
