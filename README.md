@@ -39,12 +39,12 @@ The Sharp Chair is a full-stack web application designed to solve a genuine oper
 
 The application replaces this system entirely. Customers can register an account, browse services, select a barber, choose from dynamically generated available time slots, and confirm a booking from any internet-connected device at any time of day. Barbers log in to a separate dashboard showing only their own schedule with customer contact details. The shop owner manages all data through a built-in administration panel that requires no technical knowledge to operate.
 
-The project is built on Django 5.2 and PostgreSQL, following the Model-View-Template architectural pattern. Data is stored in a fully normalised relational database. All sensitive configuration is managed through environment variables. The application is deployed live on Heroku.
+The Sharp Chair is based in Wolverhampton, England and serves a local UK customer base. The project is built on Django 5.2 and PostgreSQL, following the Model-View-Template architectural pattern. Data is stored in a fully normalised relational database. All sensitive configuration is managed through environment variables. The application is deployed live on Heroku.
 
 ---
 
 ## 2. Target Audience and User Stories
-
+The application serves three distinct user types across a local Wolverhampton customer base. All users are assumed to be UK-based, which informs design decisions including timezone handling (Europe/London), phone number formatting, and currency display (£).
 ### 2.1 Customers
 
 | User Story | Acceptance Criteria |
