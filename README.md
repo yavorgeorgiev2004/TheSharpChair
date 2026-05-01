@@ -795,32 +795,23 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 |---|---|---|---|
 | static/css/style.css | 0 | 0 | Pass |
 
-### 10.3 JavaScript Validation
+### 10.3 Validation Screenshots 
 
-Validated using JSHint at [https://jshint.com](https://jshint.com).
-
-| Location | Errors | Warnings | Result |
-|---|---|---|---|
-| book_step1.html — card selection script | 0 | 0 | Pass |
-| book_step2.html — card selection script | 0 | 0 | Pass |
-| book_step3.html — AJAX slot fetching script | 0 | 0 | Pass |
-
-### 10.4 Python PEP8 Validation
-
-Validated using the Code Institute PEP8 linter at [https://pep8ci.herokuapp.com](https://pep8ci.herokuapp.com).
-
-| File | Errors | Result |
-|---|---|---|
-| models.py | 0 | Pass |
-| views.py | 0 | Pass |
-| forms.py | 0 | Pass |
-| bookings/urls.py | 0 | Pass |
-| barbershop/urls.py | 0 | Pass |
-| admin.py | 0 | Pass |
-| settings.py | 0 | Pass |
-
----
-
+![Home validation](docs/validation/homepage-validation.png)
+![Services validation](docs/validation/services-validation.png)
+![Login validation](docs/validation/login-validation.png)
+![Register validation](docs/validation/register.png)
+![Book Step 1 validation](docs/validation/book.png)
+![Book Step 2 validation](docs/validation/book-barber.png)
+![Book Step 3 validation](docs/validation/book-datetime.png)
+![Book Step 4 validation](docs/validation/book-details.png)
+![Booking Confirmed validation](docs/validation/conformation-ref.png)
+![My Bookings validation](docs/validation/my-bookings-validation.png)
+![Edit Booking validation](docs/validation/edit-validation.png)
+![Cancel Booking validation](docs/validation/cancel-validation.png)
+![Barber Schedule validation](docs/validation/schedule-validation.png)
+![CSS validation](docs/validation/css-validation.png)
+![Lighthouse](docs/validation/lighthouse.png)
 ## 11. Screenshots
 
 All screenshots were taken on the live Heroku deployment. Desktop screenshots were captured on Chrome at 1440px width. Mobile screenshots were captured using Chrome DevTools device emulator set to iPhone 12 (390px).
