@@ -376,6 +376,7 @@ The schema avoids data duplication throughout. Barber names are stored once in `
 - Barber availability calendar for blocking days off
 - Customer review and rating system
 - Repeat booking with one click from booking history
+- Atomic database transactions using `transaction.atomic()` to handle race conditions where two users attempt to book the same slot simultaneously — currently the Python validation layer and database UNIQUE constraint provide protection but a transaction wrapper would guarantee atomicity under high concurrent load
 
 ---
 
@@ -531,6 +532,9 @@ Reference: Twelve-Factor App — Config — [https://12factor.net/config](https:
 ### 8.2 Potential Misuse and Threats
 
 Any online booking system that allows members of the public to create accounts and reserve time slots is vulnerable to several forms of misuse. The following threats were considered during development.
+**Concurrent booking race condition**
+
+If two users simultaneously attempt to book the same barber, date and time slot, there is a theoretical window between the Python overlap check passing and the database write completing where both could succeed. In practice this is prevented by the `UNIQUE(barber_id, date, start_time)` database constraint which will reject the second INSERT at the database level, returning an IntegrityError which is caught by the try/except in `book_step4()` and shown to the user as an error message. A future improvement would wrap the validation and save in `transaction.atomic()` to guarantee the check and write happen as a single atomic operation with no race condition window.
 
 **Fake account creation and slot hoarding**
 
@@ -910,6 +914,8 @@ All seven Python files showing 0 errors in the CI PEP8 linter after fixes were a
 | Issue | Description | Status |
 |---|---|---|
 | Phone number and email not validated against real format | The phone field on the registration form accepts any string including letters and invalid formats. The email field checks for duplicate accounts but does not validate against a real email server to confirm the address exists and is reachable. A future fix would add a `RegexValidator` to the phone field to enforce a UK phone number format, and email verification on registration using a package such as django-allauth. | Known issue — basic format check present, server-side verification not implemented |
+| Past time slots bookable on current date | The slot picker correctly removes past times via AJAX but the form validation does not explicitly reject a manually submitted past time on the current date. The overlap check catches it indirectly but shows a generic database error message. A future fix would add an explicit check in clean() comparing start_time against datetime.now().time() when the booking date is today. | Known issue — functionally blocked, error message not specific |
+| Timezone assumption | The application assumes all users are in the UK (Europe/London timezone). Booking time validation uses server time which is set to Europe/London. Users accessing the site from significantly different timezones may experience unexpected behaviour when booking slots near opening or closing time. This is acceptable as the shop serves a local UK customer base. | Known limitation — by design for a UK-based business |
 
 ---
 ### 12.3 Intentional Flaws
