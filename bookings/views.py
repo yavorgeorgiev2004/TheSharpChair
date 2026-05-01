@@ -41,11 +41,12 @@ from datetime import date, time, datetime, timedelta
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required     # security decorator
+from django.contrib.auth.decorators import login_required  # security decorator
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages                           # flash message framework
-from django.http import JsonResponse                          # returns JSON instead of HTML
-from django.views.decorators.http import require_GET         # restricts to GET requests only
+from django.contrib import messages  # flash message framework
+from django.http import JsonResponse            # returns JSON instead of HTML
+# restricts to GET requests only
+from django.views.decorators.http import require_GET
 
 from .models import Service, Barber, Booking, Cancellation
 from .forms import (
@@ -99,7 +100,7 @@ def get_available_slots(barber, chosen_date, service):
         List of datetime.time objects representing free start times
     """
     # Opening and closing times as Python time objects
-    OPEN  = time(8, 0)   # 08:00
+    OPEN = time(8, 0)   # 08:00
     CLOSE = time(20, 0)  # 20:00
 
     # Step between slots — 30 minutes as a timedelta
@@ -117,7 +118,8 @@ def get_available_slots(barber, chosen_date, service):
     slots = []
 
     # datetime.combine() merges a date and a time into a datetime object
-    # so we can do arithmetic with timedelta (can't add timedelta to time alone)
+    # so we can do arithmetic with timedelta
+    # (can't add timedelta to time alone)
     current = datetime.combine(chosen_date, OPEN)
     end_day = datetime.combine(chosen_date, CLOSE)
 
@@ -159,7 +161,7 @@ def home(request):
     barbers are added or removed via the admin panel.
     """
     services = Service.objects.filter(is_active=True)
-    barbers  = Barber.objects.filter(is_available=True).select_related('user')
+    barbers = Barber.objects.filter(is_available=True).select_related('user')
     return render(request, 'bookings/home.html', {
         'services': services,
         'barbers':  barbers,
@@ -205,7 +207,10 @@ def register_view(request):
         user = form.save()
         # login() creates a new session in django_session table
         login(request, user)
-        messages.success(request, f"Welcome, {user.first_name}! Your account has been created.")
+        messages.success(
+            request,
+            f"Welcome, {user.first_name}! Your account has been created."
+        )
         return redirect('my_bookings')
 
     return render(request, 'bookings/register.html', {'form': form})
@@ -272,8 +277,12 @@ def book_step1(request):
     Django stores it server-side in the django_session database table.
     """
     # Clear any leftover session data from a previous incomplete booking
-    for key in ['booking_service', 'booking_barber', 'booking_date', 'booking_time']:
-        request.session.pop(key, None)  # pop with None default prevents KeyError
+    for key in [
+        'booking_service', 'booking_barber',
+        'booking_date', 'booking_time'
+    ]:
+        # pop with None default prevents KeyError
+        request.session.pop(key, None)
 
     form = BookingStep1Form(request.POST or None)
 
@@ -310,7 +319,9 @@ def book_step2(request):
 
     return render(request, 'bookings/book_step2.html', {
         'form':    form,
-        'barbers': Barber.objects.filter(is_available=True).select_related('user'),
+        'barbers': Barber.objects.filter(
+            is_available=True
+        ).select_related('user'),
         'step':    2,
     })
 
@@ -336,14 +347,22 @@ def book_step3(request):
 
     # Retrieve the objects chosen in previous steps from the database
     service = get_object_or_404(Service, pk=request.session['booking_service'])
-    barber  = get_object_or_404(Barber,  pk=request.session['booking_barber'])
+    barber = get_object_or_404(Barber,  pk=request.session['booking_barber'])
 
     # Pass barber and service to the form for context-aware validation
-    form  = BookingStep3Form(request.POST or None, barber=barber, service=service)
+    form = BookingStep3Form(
+        request.POST or None,
+        barber=barber,
+        service=service
+    )
     slots = []
 
-    # Generate slots for display — either from POST data or existing session value
-    chosen_date_str = request.POST.get('date') or request.session.get('booking_date')
+    # Generate slots for display — either from
+    # POST data or existing session value
+    chosen_date_str = (
+        request.POST.get('date') or
+        request.session.get('booking_date')
+    )
     if chosen_date_str:
         try:
             chosen_date = date.fromisoformat(chosen_date_str)
@@ -353,9 +372,12 @@ def book_step3(request):
             pass  # invalid date string — slots remain empty
 
     if request.method == 'POST' and form.is_valid():
-        # Store date as ISO string and time as HH:MM:SS string (JSON-serialisable)
+        # Store date as ISO string and time
+        # as HH:MM:SS string (JSON-serialisable)
         request.session['booking_date'] = form.cleaned_data['date'].isoformat()
-        request.session['booking_time'] = form.cleaned_data['start_time'].strftime('%H:%M:%S')
+        request.session['booking_time'] = (
+            form.cleaned_data['start_time'].strftime('%H:%M:%S')
+        )
         return redirect('book_step4')
 
     return render(request, 'bookings/book_step3.html', {
@@ -387,22 +409,27 @@ def book_step4(request):
     clean() validation to run.
     """
     # Guard: all four session keys must exist
-    required = ['booking_service', 'booking_barber', 'booking_date', 'booking_time']
+    required = [
+        'booking_service', 'booking_barber',
+        'booking_date', 'booking_time'
+    ]
     if not all(k in request.session for k in required):
         return redirect('book_step1')
 
     # Rebuild objects from session data
-    service     = get_object_or_404(Service, pk=request.session['booking_service'])
-    barber      = get_object_or_404(Barber,  pk=request.session['booking_barber'])
+    service = get_object_or_404(Service, pk=request.session['booking_service'])
+    barber = get_object_or_404(Barber,  pk=request.session['booking_barber'])
     chosen_date = date.fromisoformat(request.session['booking_date'])
-    start_time  = datetime.strptime(request.session['booking_time'], '%H:%M:%S').time()
+    start_time = datetime.strptime(
+        request.session['booking_time'], '%H:%M:%S'
+    ).time()
 
     # Pre-fill form with existing user data using initial=
     initial = {
         'first_name': request.user.first_name,
         'last_name':  request.user.last_name,
         'email':      request.user.email,
-        'phone':      getattr(getattr(request.user, 'profile', None), 'phone', ''),
+        'phone': getattr(getattr(request.user, 'profile', None), 'phone', ''),
     }
 
     form = BookingStep4Form(request.POST or None, initial=initial)
@@ -411,18 +438,19 @@ def book_step4(request):
         try:
             # Create Booking object in memory without saving to database yet
             booking = Booking(
-                customer   = request.user,
-                barber     = barber,
-                service    = service,
-                date       = chosen_date,
-                start_time = start_time,
-                notes      = form.cleaned_data['notes'],
-                status     = Booking.STATUS_CONFIRMED,
+                customer=request.user,
+                barber=barber,
+                service=service,
+                date=chosen_date,
+                start_time=start_time,
+                notes=form.cleaned_data['notes'],
+                status=Booking.STATUS_CONFIRMED,
             )
 
             # full_clean() runs:
             #   clean_fields()    → validates each field type
-            #   clean()           → our business rules (weekday, hours, overlap)
+            #   clean()           →
+            # our business rules (weekday, hours, overlap)
             #   validate_unique() → checks UniqueConstraint
             # Raises ValidationError if anything fails
             booking.full_clean()
@@ -435,7 +463,10 @@ def book_step4(request):
             for key in required:
                 request.session.pop(key, None)
 
-            messages.success(request, f"Booking confirmed! Your reference is #{booking.ref}")
+            messages.success(
+                request,
+                f"Booking confirmed! Your reference is #{booking.ref}"
+            )
             # Redirect to confirmation page with booking ref in URL
             return redirect('booking_confirmed', ref=booking.ref)
 
@@ -456,7 +487,8 @@ def book_step4(request):
 @login_required
 def booking_confirmed(request, ref):
     """
-    Confirmation page shown after a successful booking (/book/confirmed/<ref>/).
+    Confirmation page shown after a successful booking
+    (/book/confirmed/<ref>/).
 
     The <ref> URL parameter is captured from the URL and passed as
     an argument. get_object_or_404 with customer=request.user ensures
@@ -464,7 +496,11 @@ def booking_confirmed(request, ref):
     anyone else gets a 404.
     """
     booking = get_object_or_404(Booking, ref=ref, customer=request.user)
-    return render(request, 'bookings/booking_confirmed.html', {'booking': booking})
+    return render(
+        request,
+        'bookings/booking_confirmed.html',
+        {'booking': booking}
+    )
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -474,7 +510,8 @@ def booking_confirmed(request, ref):
 @login_required
 def my_bookings(request):
     """
-    Customer dashboard — lists all bookings for the logged-in user (/my-bookings/).
+    Customer dashboard — lists all bookings for
+    the logged-in user (/my-bookings/).
 
     QUERY OPTIMISATION
     ------------------
@@ -494,7 +531,8 @@ def my_bookings(request):
 
     return render(request, 'bookings/my_bookings.html', {
         'bookings': bookings,
-        'today':    date.today(),       # used in template for past/future detection
+        # used in template for past/future detection
+        'today':    date.today(),
     })
 
 
@@ -542,7 +580,9 @@ def edit_booking(request, booking_id):
     # Pre-generate slots for the current barber and date for the form
     slots = []
     if booking.date:
-        slots = get_available_slots(booking.barber, booking.date, booking.service)
+        slots = get_available_slots(
+            booking.barber, booking.date, booking.service
+        )
 
     return render(request, 'bookings/edit_booking.html', {
         'form':    form,
@@ -584,14 +624,17 @@ def cancel_booking(request, booking_id):
 
     # ── Permission check ──
     is_customer = (booking.customer == request.user)
-    is_barber   = (
+    is_barber = (
         hasattr(request.user, 'barber') and
         booking.barber == request.user.barber
     )
 
     # Block if none of the valid roles match
     if not (is_customer or is_barber or request.user.is_staff):
-        messages.error(request, "You do not have permission to cancel this booking.")
+        messages.error(
+            request,
+            "You do not have permission to cancel this booking."
+        )
         return redirect('my_bookings')
 
     # Block double-cancellation
@@ -608,12 +651,15 @@ def cancel_booking(request, booking_id):
 
         # Create audit record — records who cancelled, when, and why
         Cancellation.objects.create(
-            booking      = booking,
-            cancelled_by = request.user,
-            reason       = form.cleaned_data.get('reason', ''),
+            booking=booking,
+            cancelled_by=request.user,
+            reason=form.cleaned_data.get('reason', ''),
         )
 
-        messages.success(request, f"Booking #{booking.ref} has been cancelled.")
+        messages.success(
+            request,
+            f"Booking #{booking.ref} has been cancelled."
+        )
 
         # Redirect to appropriate page based on who cancelled
         if is_barber and not is_customer:
@@ -660,10 +706,15 @@ def barber_schedule(request):
         barber=request.user.barber,
         status__in=[Booking.STATUS_CONFIRMED, Booking.STATUS_PENDING],
     ).select_related(
-        'customer', 'service'    # JOIN to avoid N+1 for customer name and service
+        # JOIN to avoid N+1 for customer name and service
+        'customer', 'service'
     ).order_by('date', 'start_time')  # ascending — earliest first
 
-    return render(request, 'bookings/barber_schedule.html', {'bookings': bookings})
+    return render(
+        request,
+        'bookings/barber_schedule.html',
+        {'bookings': bookings}
+    )
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -702,13 +753,13 @@ def available_slots_ajax(request):
     """
     try:
         # Read query parameters from the URL (?barber_id=1&...)
-        barber_id  = request.GET.get('barber_id')
-        date_str   = request.GET.get('date')
+        barber_id = request.GET.get('barber_id')
+        date_str = request.GET.get('date')
         service_id = request.GET.get('service_id')
 
         # Fetch the objects — raises Barber/Service.DoesNotExist if invalid IDs
-        barber      = Barber.objects.get(pk=barber_id)
-        service     = Service.objects.get(pk=service_id)
+        barber = Barber.objects.get(pk=barber_id)
+        service = Service.objects.get(pk=service_id)
 
         # Convert ISO date string to Python date object
         chosen_date = date.fromisoformat(date_str)
@@ -728,3 +779,4 @@ def available_slots_ajax(request):
     except Exception as e:
         # Catch-all for invalid IDs, bad date strings, etc.
         return JsonResponse({'error': str(e)}, status=400)
+
