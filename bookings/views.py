@@ -242,7 +242,7 @@ def login_view(request):
         messages.success(request, f"Welcome back, {user.first_name}!")
         # Respect ?next= parameter, default to my_bookings unless barber
         if hasattr(user, 'barber'):
-          return redirect(request.GET.get('next', 'barber_schedule'))
+            return redirect(request.GET.get('next', 'barber_schedule'))
         return redirect(request.GET.get('next', 'my_bookings'))
 
     return render(request, 'bookings/login.html', {'form': form})
