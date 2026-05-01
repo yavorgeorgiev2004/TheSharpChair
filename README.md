@@ -833,6 +833,15 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 
 ![CSS validation](docs/validation/css-validation.png)
 
+The W3C CSS Validator returned **0 errors** and **149 warnings**. 
+The warnings are not errors and do not indicate invalid or broken CSS. 
+They fall into four categories:
+
+- **CSS variables not statically checked** — the vast majority of warnings. Every use of a CSS custom property such as `var(--gold)` or `var(--border)` is flagged because the validator cannot resolve variable values at parse time. CSS custom properties are a fully standardised feature supported in all modern browsers since 2015 and are the recommended approach for maintaining consistent design tokens.
+- **`-webkit-` vendor extended pseudo-elements** — the custom scrollbar styles (`::-webkit-scrollbar`, `::-webkit-scrollbar-track`, `::-webkit-scrollbar-thumb`) and the date picker indicator (`::-webkit-calendar-picker-indicator`) are flagged as vendor extensions. These are intentional — they style browser-specific UI elements and are widely used in production web development.
+  
+None of these warnings affect the appearance or functionality of the application. The CSS is valid and renders correctly across Chrome, Safari and Firefox on desktop and mobile.
+
 ### 10.3 LightHouse performance Screenshots 
 
 ![Lighthouse](docs/validation/lighthouse.png)
@@ -1432,7 +1441,7 @@ Reference: [https://docs.djangoproject.com/en/5.2/topics/auth/default/#groups](h
 | `::after` pseudo-element | Sliding gold bottom border on service cards on hover — animated with `width` transition | [https://developer.mozilla.org/en-US/docs/Web/CSS/::after](https://developer.mozilla.org/en-US/docs/Web/CSS/::after) |
 | `repeating-linear-gradient` | Creates the barber pole stripe pattern — animated with `background-position` | [https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/repeating-linear-gradient](https://developer.mozilla.org/en-US/docs/Web/CSS/gradient/repeating-linear-gradient) |
 | `white-space: nowrap` | Prevents logo and nav links from wrapping onto multiple lines on mobile | [https://developer.mozilla.org/en-US/docs/Web/CSS/white-space](https://developer.mozilla.org/en-US/docs/Web/CSS/white-space) |
-| `word-break: break-word` | Prevents long booking references and text from overflowing their container | [https://developer.mozilla.org/en-US/docs/Web/CSS/word-break](https://developer.mozilla.org/en-US/docs/Web/CSS/word-break) |
+| `overflow-wrap: break-word` | Prevents long booking references and text from overflowing their container. The modern standard property replacing the deprecated `word-break: break-word` value. | [https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/overflow-wrap) |
 | `user-select: none` | Prevents text selection on clickable cards — improves click experience | [https://developer.mozilla.org/en-US/docs/Web/CSS/user-select](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) |
 | `min()` function | `max-width: min(340px, calc(100vw - 3rem))` — flash messages never wider than screen | [https://developer.mozilla.org/en-US/docs/Web/CSS/min](https://developer.mozilla.org/en-US/docs/Web/CSS/min) |
 
