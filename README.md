@@ -1094,7 +1094,7 @@ heroku run python manage.py migrate --app your-app-name
 The following accounts are available on the live Heroku deployment for assessment.
 
 **Superuser / Admin**
-####use https://the-sharp-chair-3f9e41c19275.herokuapp.com/ and add the url from the collum corespondint to URL at the end 
+use https://the-sharp-chair-3f9e41c19275.herokuapp.com/admin/
 | | |
 |---|---|
 | URL | `/admin/` |
@@ -1104,7 +1104,7 @@ The following accounts are available on the live Heroku deployment for assessmen
 Full access to all data in the Django admin panel. All bookings, users, services, barbers and cancellation records can be viewed and managed here.
 
 **Test Customer**
-####use https://the-sharp-chair-3f9e41c19275.herokuapp.com/ and add the url from the collum corespondint to URL at the end 
+use https://the-sharp-chair-3f9e41c19275.herokuapp.com/login/
 | | |
 |---|---|
 | URL | `/login/` |
@@ -1114,7 +1114,7 @@ Full access to all data in the Django admin panel. All bookings, users, services
 A regular customer account. Use this to test the booking wizard, My Bookings, edit and cancel functionality.
 
 **Test Barbers**
-
+use https://the-sharp-chair-3f9e41c19275.herokuapp.com/login/
 | | |
 |---|---|
 | URL | `/login/` |
