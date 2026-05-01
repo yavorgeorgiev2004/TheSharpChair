@@ -791,12 +791,12 @@ Validated using the W3C Markup Validation Service at [https://validator.w3.org](
 
 Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-validator](https://jigsaw.w3.org/css-validator).
 
-| File | Errors | Warnings | Result |
-|---|---|---|---|
-| static/css/style.css | 0 | 0 | Pass |
+![CSS validation](docs/validation/css-validation.png)
 
-### 10.3 Validation Screenshots 
+### 10.3 LightHouse performance Screenshots 
 
+![Lighthouse](docs/validation/lighthouse.png)
+### 10.4 HTML Validation Screenshots
 ![Home validation](docs/validation/homepage-validation.png)
 ![Services validation](docs/validation/services-validation.png)
 ![Login validation](docs/validation/login-validation.png)
@@ -810,8 +810,7 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 ![Edit Booking validation](docs/validation/edit-validation.png)
 ![Cancel Booking validation](docs/validation/cancel-validation.png)
 ![Barber Schedule validation](docs/validation/schedule-validation.png)
-![CSS validation](docs/validation/css-validation.png)
-![Lighthouse](docs/validation/lighthouse.png)
+
 ## 11. Screenshots
 
 All screenshots were taken on the live Heroku deployment. Desktop screenshots were captured on Chrome at 1440px width. Mobile screenshots were captured using Chrome DevTools device emulator set to iPhone 12 (390px).
