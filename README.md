@@ -860,8 +860,20 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 | Issue | Description | Status |
 |---|---|---|
 | Barber redirected to My Bookings on login | When a barber account logs in, Django's `LOGIN_REDIRECT_URL` in `settings.py` is set to `/my-bookings/` which is the customer dashboard. Barbers are redirected there instead of `/schedule/`. The barber can manually navigate to My Schedule via the navigation link. A future fix would add a custom login view that checks `hasattr(user, 'barber')` after authentication and redirects to the appropriate dashboard based on role. | Known issue — navigation link available as workaround |
-| Barbers can access the booking wizard | Barber accounts are not blocked from completing a booking as a customer. There is no restriction preventing a logged-in barber from navigating to `/book/` and creating an appointment. A future fix would add a check in `book_step1()` that redirects barbers away from the wizard. | Known issue — low priority as barbers would only be booking for themselves |
 | Phone number and email not validated against real format | The phone field on the registration form accepts any string including letters and invalid formats. The email field checks for duplicate accounts but does not validate against a real email server to confirm the address exists and is reachable. A future fix would add a `RegexValidator` to the phone field to enforce a UK phone number format, and email verification on registration using a package such as django-allauth. | Known issue — basic format check present, server-side verification not implemented |
+
+---
+### 12.3 Intentional Flaws
+
+The following behaviour was identified during testing but was deliberately left in place after consideration of real-world use cases.
+
+**Barbers can access the booking wizard**
+
+Barber accounts are not restricted from completing a booking through the customer-facing booking wizard. This was identified during testing but is considered beneficial rather than a flaw.
+
+A barber may have customers who are elderly, have no internet access, or are otherwise unable to book online themselves. In these situations the barber can log in and create a booking on the customer's behalf, keeping the schedule accurate and ensuring all appointments are tracked in the system regardless of how they were originally arranged. The booking will then appear on the barber's own schedule view alongside all customer-made appointments, giving them a complete picture of their day.
+
+Restricting barbers from the booking wizard would remove this useful capability for managing walk-in and telephone bookings made on behalf of customers. This behaviour is therefore treated as a deliberate design decision rather than a bug requiring a fix.
 
 ---
 
