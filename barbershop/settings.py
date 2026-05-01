@@ -53,7 +53,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-producti
 # but dangerous in production as it exposes code and config to users.
 # Always False on Heroku via the environment variable.
 # cast=bool converts the string 'False' from the env var to Python False.
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Heroku provides a .herokuapp.com subdomain. localhost and 127.0.0.1
 # are needed for local development. The leading dot covers all subdomains.
