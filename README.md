@@ -280,7 +280,7 @@ All colours are defined as CSS custom properties in `:root`. Changing a colour i
 
 ### 5.1 Schema Diagram
 
-![The Sharp Chair Database Schema](docs/schema.jpg)
+![The Sharp Chair Database Schema](docs/validation/sharpchair_schema.jpg)
 
 The schema shows all six tables, their columns and data types, primary and foreign key relationships, and the UNIQUE constraint on the booking table that prevents double booking at the database level.
 
@@ -715,26 +715,6 @@ Usability testing assessed whether the application could be understood and navig
 | Back buttons work throughout wizard | Navigate using back buttons in the booking wizard | Previous step is shown with previous selection retained | Pass |
 
 ---
-
-### 9.5 Accessibility Testing
-
-Accessibility testing assessed whether the application could be used by a wide range of users including those using keyboard navigation or screen readers.
-
-| Test | Steps | Expected | Pass / Fail |
-|---|---|---|---|
-| Form labels present | Inspect all form fields on every page | Every input element has a corresponding label element | Pass |
-| Images have alt text | Inspect all images including the logo area | All images have descriptive alt attributes | Pass |
-| Colour contrast sufficient | Check text against background using Chrome DevTools contrast checker | All body text passes WCAG AA contrast ratio of 4.5:1 | Pass |
-| Keyboard navigation — home page | Press Tab key from the top of the home page | Focus moves through all nav links and buttons in logical order | Pass |
-| Keyboard navigation — booking wizard | Press Tab key through each booking wizard step | All cards, inputs and buttons are reachable and operable by keyboard | Pass |
-| Keyboard navigation — forms | Press Tab through login and register forms | Every field and the submit button are reachable by keyboard | Pass |
-| Focus indicator visible | Tab through the site without a mouse | Focused element is visually highlighted (gold border on inputs) | Pass |
-| Error messages linked to fields | Submit invalid form and inspect error messages | Error messages appear directly below the field they relate to | Pass |
-| Semantic HTML elements used | Inspect page source | Correct use of nav, main, footer, article, header, label elements | Pass |
-| Page titles are descriptive | Check browser tab title on each page | Each page has a unique descriptive title e.g. Services — The Sharp Chair | Pass |
-
----
-
 ### 9.6 Responsiveness Testing
 
 Tested using Chrome DevTools device emulator and real devices where available.
@@ -761,6 +741,52 @@ Tested using Chrome DevTools device emulator and real devices where available.
 | Login page | iPhone 12 — 390px | Form centred, fields full width, submit button full width | Pass |
 | Register page | iPhone 12 — 390px | All fields visible, no horizontal overflow | Pass |
 | Footer | iPhone 12 — 390px | Footer items stack vertically, all links accessible | Pass |
+
+
+---
+### 9.5 Accessibility Testing
+
+Accessibility testing assessed whether the application could be used by a wide range of users including those using keyboard navigation or screen readers.
+
+| Test | Steps | Expected | Pass / Fail |
+|---|---|---|---|
+| Form labels present | Inspect all form fields on every page | Every input element has a corresponding label element | Pass |
+| Images have alt text | Inspect all images including the logo area | All images have descriptive alt attributes | Pass |
+| Colour contrast sufficient | Check text against background using Chrome DevTools contrast checker | All body text passes WCAG AA contrast ratio of 4.5:1 | Pass |
+| Keyboard navigation — home page | Press Tab key from the top of the home page | Focus moves through all nav links and buttons in logical order | Pass |
+| Keyboard navigation — booking wizard | Press Tab key through each booking wizard step | All cards, inputs and buttons are reachable and operable by keyboard | Pass |
+| Keyboard navigation — forms | Press Tab through login and register forms | Every field and the submit button are reachable by keyboard | Pass |
+| Focus indicator visible | Tab through the site without a mouse | Focused element is visually highlighted (gold border on inputs) | Pass |
+| Error messages linked to fields | Submit invalid form and inspect error messages | Error messages appear directly below the field they relate to | Pass |
+| Semantic HTML elements used | Inspect page source | Correct use of nav, main, footer, article, header, label elements | Pass |
+| Page titles are descriptive | Check browser tab title on each page | Each page has a unique descriptive title e.g. Services — The Sharp Chair | Pass |
+
+---
+
+### Accessibility — WAVE Report
+
+Accessibility was tested using the [WAVE Web Accessibility Evaluation Tool](https://wave.webaim.org/) on the live Heroku deployment.
+
+![WAVE Accessibility Report](docs/validation/accessebilty.png)
+
+| Category | Result |
+|---|---|
+| Errors | 0 |
+| Contrast Errors | 0 |
+| Alerts | 6 |
+| Features | 1 |
+| Structure | 6 |
+| ARIA | 0 |
+| AIM Score | 9.8 out of 10 |
+
+**Result: No errors detected.**
+
+The 6 alerts are advisory notices, not errors:
+
+- **2 Redundant links** — the logo and the Home nav link both point to the home page. This is intentional and standard practice on all websites. Screen readers can skip duplicate links using landmark navigation so this does not affect usability.
+- **4 Very small text** — the WAVE tool flagged four instances of small text in the navigation and footer labels. These use `0.62rem` to `0.78rem` font sizes which are intentional for the compact navigation design. All text passes the colour contrast check and remains readable in context.
+
+The AIM Score of 9.8 out of 10 and zero errors or contrast errors confirms the application meets accessibility standards. The `lang="en"` attribute on the HTML element was correctly detected as the 1 Language feature. All form fields have associated labels, all interactive elements are keyboard navigable, and all landmark regions have unique accessible names via `aria-label` attributes added to the navigation elements.
 
 ---
 
