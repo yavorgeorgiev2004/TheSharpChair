@@ -76,12 +76,12 @@
      Encourages users to book after browsing services.
      Flexbox layout — text left, button right — wraps on mobile.
      ══════════════════════════════════════════════════════════════════ -->
-<section style="padding:3rem 4rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); gap:2rem; flex-wrap:wrap;">
+<div style="padding:3rem 4rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); gap:2rem; flex-wrap:wrap;">
   <div>
     <div style="font-family:'Bebas Neue',cursive; font-size:1.8rem; letter-spacing:3px;">READY TO BOOK?</div>
     <p style="color:var(--muted); font-size:0.9rem; margin-top:0.4rem;">Pick your service, choose your barber, lock in your slot.</p>
   </div>
   <a href="{% url 'book_step1' %}" class="btn btn-primary">Book Appointment →</a>
-</section>
+</div>
 
 {% endblock %}
