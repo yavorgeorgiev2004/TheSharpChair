@@ -29,7 +29,10 @@
             Only rendered if help text exists (empty for most fields).
           -->
           {% if field.help_text %}
-            <small style="color:var(--muted); font-size:0.75rem;">{{ field.help_text }}</small>
+               <p id="{{ field.id_for_label }}_helptext"
+                 style="color:var(--muted); font-size:0.75rem; margin-top:4px;">
+                  {{ field.help_text|safe }}
+                </p>
           {% endif %}
 
           <!-- Inline validation errors shown beneath each field -->
