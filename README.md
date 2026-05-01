@@ -377,6 +377,11 @@ The schema avoids data duplication throughout. Barber names are stored once in `
 - Customer review and rating system
 - Repeat booking with one click from booking history
 - Atomic database transactions using `transaction.atomic()` to handle race conditions where two users attempt to book the same slot simultaneously — currently the Python validation layer and database UNIQUE constraint provide protection but a transaction wrapper would guarantee atomicity under high concurrent load
+## 6a. Project Structure
+
+![Project Folder Structure](docs/folder-structure.png)
+
+**Note on static files:** The `static/` folder contains source CSS written during development. A `staticfiles/` folder is generated automatically by `python manage.py collectstatic` during Heroku deployment — listed in `.gitignore` and never committed. Whitenoise serves files from `staticfiles/` in production.
 
 ---
 
