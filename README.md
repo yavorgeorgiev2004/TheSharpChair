@@ -834,6 +834,9 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 | Issue | Description | Status |
 |---|---|---|
 | Expert Barbers shows 0 on home | Stat shows 0 until barber accounts are created via admin panel on Heroku. | Expected behaviour — requires admin setup after deployment. |
+| Barber redirected to My Bookings on login | When a barber account logs in, Django's `LOGIN_REDIRECT_URL` in `settings.py` is set to `/my-bookings/` which is the customer dashboard. Barbers are redirected there instead of `/schedule/`. The barber can manually navigate to My Schedule via the navigation link. A future fix would add a custom login view that checks `hasattr(user, 'barber')` after authentication and redirects to the appropriate dashboard based on role. | Known issue — navigation link available as workaround |
+| Barbers can access the booking wizard | Barber accounts are not blocked from completing a booking as a customer. There is no restriction preventing a logged-in barber from navigating to `/book/` and creating an appointment. A future fix would add a check in `book_step1()` that redirects barbers away from the wizard. | Known issue — low priority as barbers would only be booking for themselves |
+| Phone number and email not validated against real format | The phone field on the registration form accepts any string including letters and invalid formats. The email field checks for duplicate accounts but does not validate against a real email server to confirm the address exists and is reachable. A future fix would add a `RegexValidator` to the phone field to enforce a UK phone number format, and email verification on registration using a package such as django-allauth. | Known issue — basic format check present, server-side verification not implemented |
 
 ---
 
