@@ -1,3 +1,47 @@
+"""
+
+bookings/urls.py
+================
+URL routing configuration for the bookings application.
+
+HOW URL ROUTING WORKS
+---------------------
+Each path() call maps a URL pattern to a view function and gives it
+a name. Django checks patterns in order from top to bottom and calls
+the first matching view.
+
+URL NAMES
+---------
+The name= argument is critical. It allows views and templates to
+reference URLs by name rather than hardcoded paths:
+
+    In views.py:       redirect('my_bookings')
+    In templates:      {% url 'cancel_booking' booking.id %}
+
+If you rename a URL path (e.g. '/my-bookings/' → '/bookings/'),
+only this file needs updating. Views, templates, and redirects
+all continue working because they reference the name, not the path.
+
+URL PARAMETERS
+--------------
+<int:booking_id> captures an integer from the URL and passes it
+to the view as the booking_id argument:
+
+    /my-bookings/cancel/42/  →  cancel_booking(request, booking_id=42)
+
+<str:ref> captures a string:
+    /book/confirmed/SC3F7A9B/  →  booking_confirmed(request, ref='SC3F7A9B')
+
+ADDING NEW URLS
+---------------
+1. Write the view function in views.py
+2. Add a path() here with a unique name
+3. Reference by name in templates and redirects
+"""
+
+from django.urls import path
+from . import views
+
 urlpatterns = [
 
     # ── PUBLIC — no login required ───────────────────────
