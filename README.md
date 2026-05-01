@@ -1120,7 +1120,7 @@ Full access to all data in the Django admin panel. All bookings, users, services
 |---|---|
 | URL | `/login/` |
 | Username | `customer` |
-| Password | `Customer1234!` |
+| Password | `Test1234!` |
 
 A regular customer account. Use this to test the booking wizard, My Bookings, edit and cancel functionality.
 
