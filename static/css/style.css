@@ -523,13 +523,27 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cur
 
 /* ── Mobile 600px ── */
 @media (max-width: 600px) {
-  /* Nav compressed */
+  /* Nav — hide Home and Services text links to make room,
+     keep My Bookings, Sign Out and Book Now visible */
   .nav { padding: 0 0.8rem; gap: 0.5rem; }
-  .nav-links { gap: 0.6rem; }
+  .nav-links { gap: 0.5rem; }
   .nav-links a { font-size: 0.62rem; letter-spacing: 0.8px; }
   .nav-logo { font-size: 1.2rem; letter-spacing: 2px; }
 
-  /* Hero mobile */
+  /* Hide Book Now from nav on mobile — home page has Book Appointment button */
+  .nav-cta { display: none !important; }
+
+  /* Flash messages — pushed down further so they clear the nav
+     and do not overlap page content underneath */
+  .messages-container {
+    position: static;
+    margin: 0.5rem 1rem;
+    max-width: 100%;
+    right: auto;
+    top: auto;
+  }
+
+  /* Hero */
   .hero-left { padding: 2rem 1rem 1.5rem; }
   .hero-title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
   .hero-sub { font-size: 0.9rem; }
@@ -544,7 +558,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cur
   /* Services single column */
   .services-grid { grid-template-columns: 1fr; }
 
-  /* Booking wizard */
+  /* Booking */
   .booking-layout { padding: 1.5rem 1rem 3rem; }
   .bookings-wrap { padding: 1.5rem 1rem 3rem; }
   .pick-grid { grid-template-columns: 1fr 1fr; }
@@ -554,12 +568,9 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cur
   .booking-card { grid-template-columns: 1fr; }
   .booking-card-actions { justify-content: flex-start; }
 
-  /* Step progress — hide text labels */
+  /* Step progress — hide text, only show bubbles */
   .step-text { display: none; }
   .step-connector { max-width: 30px; margin: 0 0.4rem; }
-
-  /* Messages full width */
-  .messages-container { right: 0.5rem; left: 0.5rem; max-width: calc(100vw - 1rem); }
 
   /* Page header */
   .page-header { padding: 1.5rem 1rem 1rem; }
