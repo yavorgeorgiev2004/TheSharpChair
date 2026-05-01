@@ -859,6 +859,17 @@ None of these warnings affect the appearance or functionality of the application
 ![Edit Booking validation](docs/validation/edit-validation.png)
 ![Cancel Booking validation](docs/validation/cancel-validation.png)
 ![Barber Schedule validation](docs/validation/schedule-validation.png)
+### 10.5 Python PEP8 Validation Screenshots
+
+All Python files were validated using the Code Institute PEP8 linter at [https://pep8ci.herokuapp.com](https://pep8ci.herokuapp.com). All files returned 0 errors after fixes were applied.
+
+![models.py validation](docs/validation/pep8-models.png)
+![views.py validation](docs/validation/pep8-views.png)
+![forms.py validation](docs/validation/pep8-forms.png)
+![bookings/urls.py validation](docs/validation/pep8-bookings-urls.png)
+![barbershop/urls.py validation](docs/validation/pep8-barbershop-urls.png)
+![admin.py validation](docs/validation/pep8-admin.png)
+![settings.py validation](docs/validation/pep8-settings.png)
 
 ---
 
@@ -879,12 +890,12 @@ None of these warnings affect the appearance or functionality of the application
 | runtime.txt deprecated | Heroku deprecated `runtime.txt` in favour of `.python-version`, showing a warning on every build. | Deleted `runtime.txt` and created `.python-version` containing `3.13`. | 
 | Git push rejected divergent histories | GitHub was initialised with a README while the local repo was initialised separately causing divergent histories. | Ran `git pull origin main --allow-unrelated-histories` with `git config pull.rebase false` to merge before pushing. | 
 | Time slot text invisible when selected | The 08:00 time slot on the booking wizard step 3 rendered as a blank gold rectangle with no visible text. The `.time-slot` CSS rule had no explicit `color` property so the text colour was inherited inconsistently depending on the browser and screen. When the slot was selected the gold background made any inherited dark text invisible. | Added `color: var(--cream)` explicitly to the `.time-slot` rule in `style.css` so all unselected slots always show cream text regardless of inheritance. The `.time-slot.is-selected` rule already had `color: var(--black)` which is correct for gold backgrounds. |
+| Barber redirected to My Bookings on login | When a barber logs in, Django's `LOGIN_REDIRECT_URL` was set to `/my-bookings/`. Meaning they were redirected to my bookings instead of schedule |Fixed by adding a role check in `login_view()` — if `hasattr(user, 'barber')` returns True the user is redirected to `/schedule/` instead. |
 
 ### 12.2 Known Remaining Issues
 
 | Issue | Description | Status |
 |---|---|---|
-| Barber redirected to My Bookings on login | When a barber account logs in, Django's `LOGIN_REDIRECT_URL` in `settings.py` is set to `/my-bookings/` which is the customer dashboard. Barbers are redirected there instead of `/schedule/`. The barber can manually navigate to My Schedule via the navigation link. A future fix would add a custom login view that checks `hasattr(user, 'barber')` after authentication and redirects to the appropriate dashboard based on role. | Known issue — navigation link available as workaround |
 | Phone number and email not validated against real format | The phone field on the registration form accepts any string including letters and invalid formats. The email field checks for duplicate accounts but does not validate against a real email server to confirm the address exists and is reachable. A future fix would add a `RegexValidator` to the phone field to enforce a UK phone number format, and email verification on registration using a package such as django-allauth. | Known issue — basic format check present, server-side verification not implemented |
 
 ---
