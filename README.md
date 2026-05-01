@@ -810,8 +810,7 @@ The AIM Score of 9.8 out of 10 and zero errors or contrast errors confirms the a
 
 ## 10. Validation
 
-### 10.1 HTML Validation
-#### GO to 10.4 for the Screenshots 
+### 10.1 HTML Validation 
 
 Validated using the W3C Markup Validation Service at [https://validator.w3.org](https://validator.w3.org).
 
@@ -877,7 +876,7 @@ All Python files were validated using the Code Institute PEP8 linter at [https:/
 | admin.py | 2 | 0 | Pass |
 | settings.py | 4 | 0 | Pass |
 
-### 10.5 Python PEP8 Validation Screenshots
+### 10.6 Python PEP8 Validation Screenshots
 
 All seven Python files showing 0 errors in the CI PEP8 linter after fixes were applied.
 
@@ -888,6 +887,7 @@ All seven Python files showing 0 errors in the CI PEP8 linter after fixes were a
 ![barbershop/urls.py validation](docs/validation/pep8-barbershop-urls.png)
 ![admin.py validation](docs/validation/pep8-admin.png)
 ![settings.py validation](docs/validation/pep8-settings.png)
+
 ---
 
 ## 12. Bugs
