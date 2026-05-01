@@ -24,7 +24,6 @@
 8. [Security](#8-security)
 9. [Testing](#9-testing)
 10. [Validation](#10-validation)
-11. [Screenshots](#11-screenshots)
 12. [Bugs](#12-bugs)
 13. [Deployment](#13-deployment)
 14. [How to Use the Application](#14-how-to-use-the-application)
@@ -810,102 +809,6 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 ![Edit Booking validation](docs/validation/edit-validation.png)
 ![Cancel Booking validation](docs/validation/cancel-validation.png)
 ![Barber Schedule validation](docs/validation/schedule-validation.png)
-
-## 11. Screenshots
-
-All screenshots were taken on the live Heroku deployment. Desktop screenshots were captured on Chrome at 1440px width. Mobile screenshots were captured using Chrome DevTools device emulator set to iPhone 12 (390px).
-
----
-
-### 11.1 Desktop Screenshots
-
-#### Home Page
-
-![Home Page Desktop](docs/screenshots/desktop/home.png)
-
-#### Services Page
-
-![Services Page Desktop](docs/screenshots/desktop/services.png)
-
-#### Login Page
-
-![Login Page Desktop](docs/screenshots/desktop/login.png)
-
-#### Register Page
-
-![Register Page Desktop](docs/screenshots/desktop/register.png)
-
-#### Booking Wizard — Step 1 (Choose Service)
-
-![Book Step 1 Desktop](docs/screenshots/desktop/book-step1.png)
-
-#### Booking Wizard — Step 2 (Choose Barber)
-
-![Book Step 2 Desktop](docs/screenshots/desktop/book-step2.png)
-
-#### Booking Wizard — Step 3 (Choose Date and Time)
-
-![Book Step 3 Desktop](docs/screenshots/desktop/book-step3.png)
-
-#### Booking Wizard — Step 4 (Confirm Details)
-
-![Book Step 4 Desktop](docs/screenshots/desktop/book-step4.png)
-
-#### Booking Confirmed
-
-![Booking Confirmed Desktop](docs/screenshots/desktop/booking-confirmed.png)
-
-#### My Bookings
-
-![My Bookings Desktop](docs/screenshots/desktop/my-bookings.png)
-
-#### Edit Booking
-
-![Edit Booking Desktop](docs/screenshots/desktop/edit-booking.png)
-
-#### Cancel Booking
-
-![Cancel Booking Desktop](docs/screenshots/desktop/cancel-booking.png)
-
-#### Barber Schedule
-
-![Barber Schedule Desktop](docs/screenshots/desktop/barber-schedule.png)
-
-#### Admin Panel — Bookings List
-
-![Admin Panel Desktop](docs/screenshots/desktop/admin-bookings.png)
-
----
-
-### 11.2 Mobile Screenshots
-
-#### Home Page
-
-![Home Page Mobile](docs/screenshots/mobile/home.png)
-
-#### Services Page
-
-![Services Page Mobile](docs/screenshots/mobile/services.png)
-
-#### Login Page
-
-![Login Page Mobile](docs/screenshots/mobile/login.png)
-
-#### Booking Wizard — Step 1
-
-![Book Step 1 Mobile](docs/screenshots/mobile/book-step1.png)
-
-#### Booking Wizard — Step 3 (Time Slots)
-
-![Book Step 3 Mobile](docs/screenshots/mobile/book-step3.png)
-
-#### My Bookings
-
-![My Bookings Mobile](docs/screenshots/mobile/my-bookings.png)
-
-#### Barber Schedule
-
-![Barber Schedule Mobile](docs/screenshots/mobile/barber-schedule.png)
 
 ---
 
