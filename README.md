@@ -935,6 +935,7 @@ Restricting barbers from the booking wizard would remove this useful capability 
 ## 13. Deployment
 
 ### 13.1 Local Development Setup
+> **Note:** The following commands are written for Mac/Linux. Windows users should use `python` instead of `python3` and `.venv\Scripts\activate` instead of `source .venv/bin/activate`.
 
 **Requirements:** Python 3.12 or 3.13, Git, VS Code.
 
