@@ -6,7 +6,7 @@
 
 ## Live Site
 
-[https://the-sharp-chair.herokuapp.com](https://the-sharp-chair.herokuapp.com)
+[https://the-sharp-chair-3f9e41c19275.herokuapp.com/](https://the-sharp-chair-3f9e41c19275.herokuapp.com/)
 
 **GitHub Repository:** [https://github.com/yavorgeorgiev2004/TheSharpChair](https://github.com/yavorgeorgiev2004/TheSharpChair)
 
