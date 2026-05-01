@@ -37,14 +37,15 @@ After any change to a model field, always run makemigrations then migrate.
 Skipping this leaves the database out of sync with the Python code.
 """
 
-import uuid                          # generates unique booking references
-from datetime import datetime, timedelta  # datetime arithmetic for end_time calculation
+import uuid  # generates unique booking references
+# datetime arithmetic for end_time calculation
+from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import User  # Django's built-in user table
 from django.core.exceptions import ValidationError
 
 
-# ── USER PROFILE ──────────────────────────────────────────────────────────────
+# ── USER PROFILE ───────────────────────
 class UserProfile(models.Model):
     """
     Extends Django's built-in User model with a phone number.
@@ -72,8 +73,8 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile'
     )
-
-    phone = models.CharField(max_length=20)  # VARCHAR(20) — stored as-is, not validated
+    # VARCHAR(20) — stored as-is, not validated
+    phone = models.CharField(max_length=20)
 
     # auto_now_add=True sets this to NOW() on INSERT, never updated afterwards
     created_at = models.DateTimeField(auto_now_add=True)
@@ -83,7 +84,7 @@ class UserProfile(models.Model):
         return f"{self.user.get_full_name()} — Profile"
 
 
-# ── SERVICE ───────────────────────────────────────────────────────────────────
+# ── SERVICE ─────────────────
 class Service(models.Model):
     """
     A service offered by the barber shop (e.g. Classic Haircut, Fade & Blend).
@@ -108,9 +109,9 @@ class Service(models.Model):
         python manage.py loaddata initial_data
     """
 
-    name        = models.CharField(max_length=100)  # VARCHAR(100)
+    name = models.CharField(max_length=100)  # VARCHAR(100)
     description = models.TextField()                # TEXT — unlimited length
-    duration_mins = models.IntegerField(            # INTEGER — minutes as integer
+    duration_mins = models.IntegerField(        # INTEGER — minutes as integer
         help_text="Duration in minutes"             # shown in admin panel
     )
     price = models.DecimalField(                    # NUMERIC(6,2) — e.g. 18.00
@@ -129,7 +130,7 @@ class Service(models.Model):
         return f"{self.name} (£{self.price}, {self.duration_mins}min)"
 
 
-# ── BARBER ────────────────────────────────────────────────────────────────────
+# ── BARBER ────────────────────────────
 class Barber(models.Model):
     """
     Represents a barber — linked to a User account so the barber can log in.
@@ -157,23 +158,25 @@ class Barber(models.Model):
     """
 
     # OneToOneField — one user account, one barber profile
-    # related_name='barber' allows: user.barber (accessed in views and templates)
+    # related_name='barber' allows:
+    # user.barber (accessed in views and templates)
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name='barber'
     )
 
-    speciality   = models.CharField(max_length=100)  # e.g. "Fades & Skin Fades"
-    bio          = models.TextField(blank=True)       # optional — blank=True allows empty
-    is_available = models.BooleanField(default=True)  # toggle to hide barber from bookings
+    speciality = models.CharField(max_length=100)  # e.g. "Fades & Skin Fades"
+    bio = models.TextField(blank=True)   # optional — blank=True allows empty
+    # toggle to hide barber from bookings
+    is_available = models.BooleanField(default=True)
 
     def __str__(self):
         # get_full_name() returns "First Last" from the linked User record
         return self.user.get_full_name()
 
 
-# ── BOOKING ───────────────────────────────────────────────────────────────────
+# ── BOOKING ───────────────────────────────────
 class Booking(models.Model):
     """
     The core transaction table — one row per appointment.
@@ -212,7 +215,7 @@ class Booking(models.Model):
     """
 
     # ── Status constants — use these instead of raw strings to avoid typos ──
-    STATUS_PENDING   = 'pending'
+    STATUS_PENDING = 'pending'
     STATUS_CONFIRMED = 'confirmed'
     STATUS_CANCELLED = 'cancelled'
     STATUS_COMPLETED = 'completed'
@@ -224,7 +227,7 @@ class Booking(models.Model):
         (STATUS_COMPLETED, 'Completed'),
     ]
 
-    # ── FOREIGN KEYS ──────────────────────────────────────────────────────────
+    # ── FOREIGN KEYS ──────────────────────────────────
     # ForeignKey generates an INTEGER column with a FOREIGN KEY constraint.
     # Django automatically names the column customer_id, barber_id, service_id.
     # related_name allows reverse access: user.bookings.all()
@@ -251,8 +254,8 @@ class Booking(models.Model):
         related_name='bookings'
     )
 
-    # ── BOOKING FIELDS ────────────────────────────────────────────────────────
-    date       = models.DateField()    # DATE column — e.g. 2025-06-10
+    # ── BOOKING FIELDS ───────────────────────────────────
+    date = models.DateField()    # DATE column — e.g. 2025-06-10
     start_time = models.TimeField()    # TIME column — e.g. 10:30:00
 
     # null=True, blank=True: allows end_time to be empty initially.
@@ -268,10 +271,11 @@ class Booking(models.Model):
         default=STATUS_CONFIRMED
     )
 
-    notes      = models.TextField(blank=True)  # optional customer requests
+    notes = models.TextField(blank=True)  # optional customer requests
 
     # unique=True adds UNIQUE constraint — no two bookings share the same ref
-    # editable=False hides from admin/forms — only set programmatically in save()
+    # editable=False hides from admin/forms —
+    # only set programmatically in save()
     ref = models.CharField(max_length=12, unique=True, editable=False)
 
     # auto_now_add: set on INSERT only — records when booking was first created
@@ -294,7 +298,7 @@ class Booking(models.Model):
             )
         ]
 
-    # ── PRIVATE HELPER ────────────────────────────────────────────────────────
+    # ── PRIVATE HELPER ──────────────────────────────────
     def _calculate_end_time(self):
         """
         Calculates and sets end_time from start_time + service duration.
@@ -320,7 +324,7 @@ class Booking(models.Model):
             end_dt = start_dt + timedelta(minutes=self.service.duration_mins)
             self.end_time = end_dt.time()
 
-    # ── SAVE ──────────────────────────────────────────────────────────────────
+    # ── SAVE ──────────────────────────────────────────────────
     def save(self, *args, **kwargs):
         """
         Overrides Django's default save() to:
@@ -344,7 +348,7 @@ class Booking(models.Model):
         # Call Django's original save() to write to the database
         super().save(*args, **kwargs)
 
-    # ── VALIDATION ────────────────────────────────────────────────────────────
+    # ── VALIDATION ───────────────────────────────────────────
     def clean(self):
         """
         Business rule validation — runs before any database write via
@@ -372,12 +376,18 @@ class Booking(models.Model):
         # STEP 2: Weekdays only (Monday=0 through Sunday=6)
         # weekday() >= 5 catches Saturday (5) and Sunday (6)
         if self.date and self.date.weekday() >= 5:
-            raise ValidationError("Bookings are only available Monday to Friday.")
+            raise ValidationError(
+                "Bookings are only available Monday to Friday."
+                )
 
         # STEP 3: Opening hours check — 8am to 8pm
         # Uses Python's comparison chaining: 8:00 <= start < 20:00
-        if self.start_time and not (dt_time(8, 0) <= self.start_time < dt_time(20, 0)):
-            raise ValidationError("Bookings must start between 8:00am and 8:00pm.")
+        if self.start_time and not (
+            dt_time(8, 0) <= self.start_time < dt_time(20, 0)
+        ):
+            raise ValidationError(
+                "Bookings must start between 8:00am and 8:00pm."
+            )
 
         # STEP 4: Overlap check — query database for conflicts
         # Only runs if all required fields are present (guards against
@@ -387,22 +397,27 @@ class Booking(models.Model):
             # Two ranges [A_start, A_end] and [B_start, B_end] overlap if:
             # A_start < B_end AND A_end > B_start
             # Applied here: existing booking overlaps candidate slot if:
-            # existing.start_time < candidate.end_time (starts before candidate ends)
-            # existing.end_time > candidate.start_time (ends after candidate starts)
+            # existing.start_time < candidate.end_time
+            # (starts before candidate ends)
+            # existing.end_time > candidate.start_time
+            # (ends after candidate starts)
             conflicts = Booking.objects.filter(
                 barber=self.barber,
                 date=self.date,
                 status__in=[self.STATUS_CONFIRMED, self.STATUS_PENDING],
-                start_time__lt=self.end_time,    # existing starts before this ends
-                end_time__gt=self.start_time,    # existing ends after this starts
-            ).exclude(pk=self.pk)  # exclude self when editing an existing booking
+                # existing starts before this ends
+                start_time__lt=self.end_time,
+                # existing ends after this starts
+                end_time__gt=self.start_time,
+                # exclude self when editing an existing booking
+            ).exclude(pk=self.pk)
 
             if conflicts.exists():
                 raise ValidationError(
                     "This time slot is already booked for the selected barber."
                 )
 
-    # ── COMPUTED PROPERTY ─────────────────────────────────────────────────────
+    # ── COMPUTED PROPERTY ──────────────────────────
     @property
     def is_past(self):
         """
@@ -423,7 +438,7 @@ class Booking(models.Model):
         )
 
 
-# ── CANCELLATION ──────────────────────────────────────────────────────────────
+# ── CANCELLATION ──────────────────────────────────────
 class Cancellation(models.Model):
     """
     Audit record created whenever a booking is cancelled.
@@ -469,8 +484,10 @@ class Cancellation(models.Model):
         related_name='cancellations'
     )
 
-    reason       = models.TextField(blank=True)   # optional reason from the form
-    cancelled_at = models.DateTimeField(auto_now_add=True)  # set automatically on creation
+    reason = models.TextField(blank=True)   # optional reason from the form
+    # set automatically on creation
+    cancelled_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Cancellation: #{self.booking.ref} by {self.cancelled_by}"
+
