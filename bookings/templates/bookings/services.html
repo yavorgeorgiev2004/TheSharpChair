@@ -16,7 +16,7 @@
 <!-- ══════════════════════════════════════════════════════════════════
      SERVICES GRID
      CSS grid — auto-fills columns at minimum 290px each.
-     A 1px gap with background: var(--border) creates the grid lines
+     A 1px gap with background: var(-border) creates the grid lines
      between cards (the gap IS the border, not a border property).
      ══════════════════════════════════════════════════════════════════ -->
 <div class="services-grid">
@@ -32,7 +32,7 @@
   <article class="service-card fade-up">
 
     <!-- {{ service.name }} → e.g. "Classic Haircut" -->
-    <h3 class="service-card-name">{{ service.name }}</h3>
+    <h2 class="service-card-name">{{ service.name }}</h2>
 
     <!-- {{ service.description }} → full description text from the database -->
     <p class="service-card-desc">{{ service.description }}</p>
