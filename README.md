@@ -868,6 +868,7 @@ Validated using the W3C CSS Validation Service at [https://jigsaw.w3.org/css-val
 | psycopg2-binary build error on Heroku | `psycopg2-binary==2.9.9` was incompatible with Python 3.13 on Heroku causing deployment failure. | Upgraded to `psycopg2-binary==2.9.10` in requirements.txt. |
 | runtime.txt deprecated | Heroku deprecated `runtime.txt` in favour of `.python-version`, showing a warning on every build. | Deleted `runtime.txt` and created `.python-version` containing `3.13`. | 
 | Git push rejected divergent histories | GitHub was initialised with a README while the local repo was initialised separately causing divergent histories. | Ran `git pull origin main --allow-unrelated-histories` with `git config pull.rebase false` to merge before pushing. | 
+| Time slot text invisible when selected | The 08:00 time slot on the booking wizard step 3 rendered as a blank gold rectangle with no visible text. The `.time-slot` CSS rule had no explicit `color` property so the text colour was inherited inconsistently depending on the browser and screen. When the slot was selected the gold background made any inherited dark text invisible. | Added `color: var(--cream)` explicitly to the `.time-slot` rule in `style.css` so all unselected slots always show cream text regardless of inheritance. The `.time-slot.is-selected` rule already had `color: var(--black)` which is correct for gold backgrounds. |
 
 ### 12.2 Known Remaining Issues
 
