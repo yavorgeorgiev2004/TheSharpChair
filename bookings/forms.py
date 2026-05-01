@@ -45,7 +45,8 @@ from datetime import date, time, datetime, timedelta
 
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm   # handles password hashing
+from django.contrib.auth.forms import UserCreationForm
+# handles password hashing
 
 from .models import Booking, UserProfile, Service, Barber
 
@@ -99,11 +100,16 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         # model = User tells Django this form creates User instances
-        model  = User
+        model = User
         # fields controls the order fields appear in the rendered form
-        fields = ['first_name', 'last_name', 'email', 'username', 'password1', 'password2']
+        fields = [
+            'first_name', 'last_name', 'email',
+            'username', 'password1', 'password2'
+            ]
         widgets = {
-            'username': forms.TextInput(attrs={'placeholder': 'Choose a username'}),
+            'username': forms.TextInput(
+                attrs={'placeholder': 'Choose a username'}
+                ),
         }
 
     def clean_email(self):
@@ -120,7 +126,9 @@ class RegisterForm(UserCreationForm):
         # Database query — check for existing user with this email
         # .exists() is efficient — returns True/False without fetching rows
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("An account with this email already exists.")
+            raise forms.ValidationError(
+                "An account with this email already exists."
+                )
 
         # Always return the cleaned value from a clean_<field> method
         return email
@@ -139,9 +147,9 @@ class RegisterForm(UserCreationForm):
         """
         # Build User object in memory — does NOT hit the database yet
         user = super().save(commit=False)
-        user.email      = self.cleaned_data['email']
+        user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
-        user.last_name  = self.cleaned_data['last_name']
+        user.last_name = self.cleaned_data['last_name']
 
         if commit:
             user.save()  # INSERT INTO auth_user — writes to database
@@ -170,7 +178,9 @@ class BookingStep1Form(forms.Form):
     empty_label=None removes the '--------' default empty option.
     """
     service = forms.ModelChoiceField(
-        queryset=Service.objects.filter(is_active=True),  # only show active services
+        queryset=Service.objects.filter(
+            is_active=True
+            ),  # only show active services
         widget=forms.RadioSelect,
         empty_label=None,
     )
@@ -185,7 +195,9 @@ class BookingStep2Form(forms.Form):
     the template doesn't trigger a separate query per barber.
     """
     barber = forms.ModelChoiceField(
-        queryset=Barber.objects.filter(is_available=True).select_related('user'),
+        queryset=Barber.objects.filter(
+            is_available=True
+            ).select_related('user'),
         widget=forms.RadioSelect,
         empty_label=None,
     )
@@ -215,7 +227,8 @@ class BookingStep3Form(forms.Form):
         widget=forms.DateInput(attrs={'type': 'date'}),
     )
     start_time = forms.TimeField(
-        widget=forms.HiddenInput(),  # populated by JavaScript when a slot is clicked
+        # populated by JavaScript when a slot is clicked
+        widget=forms.HiddenInput(),
         required=False,
     )
 
@@ -226,7 +239,7 @@ class BookingStep3Form(forms.Form):
         **kwargs passes any remaining arguments to the parent __init__.
         """
         super().__init__(*args, **kwargs)
-        self.barber  = barber
+        self.barber = barber
         self.service = service
 
     def clean_date(self):
@@ -240,7 +253,8 @@ class BookingStep3Form(forms.Form):
         if not chosen:
             return chosen  # required=True handles the empty case
 
-        # Reject past dates — cannot book an appointment that has already passed
+        # Reject past dates — cannot book an appointment
+        # that has already passed
         if chosen < date.today():
             raise forms.ValidationError("Please choose a future date.")
 
@@ -260,9 +274,9 @@ class BookingStep3Form(forms.Form):
         field values that passed their individual validation.
         Checks that a time slot was actually selected.
         """
-        cleaned    = super().clean()
+        cleaned = super().clean()
         chosen_date = cleaned.get('date')
-        start_time  = cleaned.get('start_time')
+        start_time = cleaned.get('start_time')
 
         # Only check if date passed validation (could be None if date invalid)
         if chosen_date and not start_time:
@@ -342,7 +356,7 @@ class EditBookingForm(forms.ModelForm):
     )
 
     class Meta:
-        model  = Booking
+        model = Booking
         fields = ['date', 'start_time', 'notes']
         widgets = {
             'start_time': forms.Select(),    # rendered as a dropdown
@@ -374,7 +388,7 @@ class EditBookingForm(forms.ModelForm):
         """
         choices = []
         current = datetime.combine(date.today(), time(8, 0))
-        end     = datetime.combine(date.today(), time(20, 0))
+        end = datetime.combine(date.today(), time(20, 0))
 
         while current < end:
             t = current.time()
