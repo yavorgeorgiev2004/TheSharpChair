@@ -76,20 +76,23 @@
    * The radio input handles the actual form submission.
    * This JS only handles the visual highlight.
    */
-  document.querySelectorAll('.pick-card').forEach(card => {
-    const radio = card.querySelector('input[type=radio]');
-
-    // Pre-highlight any card that was already selected (e.g. after back button)
-    if (radio && radio.checked) card.classList.add('selected');
-
-    card.addEventListener('click', () => {
-      // Clear all selections
-      document.querySelectorAll('.pick-card').forEach(c => c.classList.remove('selected'));
-      // Highlight clicked card
-      card.classList.add('selected');
-      // Check the radio (label click already does this, but explicit is safer)
-      if (radio) radio.checked = true;
+  
+/*jslint browser: true */
+document.querySelectorAll(".pick-card").forEach(function (card) {
+    "use strict";
+    var radio = card.querySelector("input[type=radio]");
+    if (radio && radio.checked) {
+        card.classList.add("selected");
+    }
+    card.addEventListener("click", function () {
+        document.querySelectorAll(".pick-card").forEach(function (c) {
+            c.classList.remove("selected");
+        });
+        card.classList.add("selected");
+        if (radio) {
+            radio.checked = true;
+        }
     });
-  });
+});
 </script>
 {% endblock %}
