@@ -89,9 +89,10 @@ ul { list-style: none; }
 button { font-family: inherit; cursor: pointer; }
 input, select, textarea { font-family: inherit; }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #141414; }
+::-webkit-scrollbar-thumb { background: #f5f0e8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c9a84c; }
 
 
 /* ── 3. ANIMATIONS ────────────────────────────────────────── */
