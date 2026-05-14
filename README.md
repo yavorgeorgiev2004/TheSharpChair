@@ -895,7 +895,19 @@ All seven Python files showing 0 errors in the CI PEP8 linter after fixes were a
 ![settings.py validation](docs/validation/pep8-settings.png)
 
 ---
+### 10.7 JavaScript Validation
 
+All JavaScript was validated using JSLint at [https://www.jslint.com](https://www.jslint.com).
+
+`book_step1.html`, `book_step2.html` and `base.html` scripts returned 0 errors after converting arrow functions to standard function expressions, replacing single quotes with double quotes, and adding curly braces to all single-line if statements.
+
+`book_step3.html` contains two Django template variables — `{{ barber.id }}` and `{{ service.id }}` — which JSLint cannot parse as they are rendered server-side before reaching the browser. All remaining logic in the file was validated with 0 errors. This is a known limitation of linting server-rendered template code and is not a code quality issue.
+![booking step one  validation](docs/validation/jslint-stepone.png)
+![booking step two validation](docs/validation/jslint-steptwo.png)
+![booking step three validation](docs/validation/jslint-stepthree.png)
+![base.html validation](docs/validation/jslint-base.png)
+
+---
 ## 12. Bugs
 
 ### 12.1 Fixed Bugs
@@ -1528,7 +1540,7 @@ Reference: [https://docs.djangoproject.com/en/5.2/topics/auth/default/#groups](h
 | Shields.io | Badge images in the README header | [https://shields.io/](https://shields.io/) |
 | W3C HTML Validator | HTML validation for all pages | [https://validator.w3.org/](https://validator.w3.org/) |
 | W3C CSS Validator | CSS validation for style.css | [https://jigsaw.w3.org/css-validator/](https://jigsaw.w3.org/css-validator/) |
-| JSHint | JavaScript validation for inline scripts | [https://jshint.com/](https://jshint.com/) |
+| JSLint | JavaScript validation for inline scripts | [https://jshint.com/](https://www.jslint.com) |
 | CI PEP8 Linter | Python code style validation | [https://pep8ci.herokuapp.com/](https://pep8ci.herokuapp.com/) |
 
 ---
