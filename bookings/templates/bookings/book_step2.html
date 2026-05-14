@@ -54,15 +54,23 @@
 
 {% block extra_js %}
 <script>
-  /* Same card selection pattern as step 1 — visual highlight only */
-  document.querySelectorAll('.barber-pick-card').forEach(card => {
-    const radio = card.querySelector('input[type=radio]');
-    if (radio && radio.checked) card.classList.add('selected');
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.barber-pick-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      if (radio) radio.checked = true;
+ /*jslint browser: true */
+ /* Same card selection pattern as step 1 — visual highlight only */
+document.querySelectorAll(".barber-pick-card").forEach(function (card) {
+    "use strict";
+    var radio = card.querySelector("input[type=radio]");
+    if (radio && radio.checked) {
+        card.classList.add("selected");
+    }
+    card.addEventListener("click", function () {
+        document.querySelectorAll(".barber-pick-card").forEach(function (c) {
+            c.classList.remove("selected");
+        });
+        card.classList.add("selected");
+        if (radio) {
+            radio.checked = true;
+        }
     });
-  });
+});
 </script>
 {% endblock %}
