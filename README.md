@@ -899,13 +899,12 @@ All seven Python files showing 0 errors in the CI PEP8 linter after fixes were a
 
 All JavaScript was validated using JSLint at [https://www.jslint.com](https://www.jslint.com).
 
-`book_step1.html`, `book_step2.html` and `base.html` scripts returned 0 errors after converting arrow functions to standard function expressions, replacing single quotes with double quotes, and adding curly braces to all single-line if statements.
+`book_step1.html` and  `book_step2.html` scripts returned 0 errors after converting arrow functions to standard function expressions, replacing single quotes with double quotes, and adding curly braces to all single-line if statements.
 
 `book_step3.html` contains two Django template variables — `{{ barber.id }}` and `{{ service.id }}` — which JSLint cannot parse as they are rendered server-side before reaching the browser. All remaining logic in the file was validated with 0 errors. This is a known limitation of linting server-rendered template code and is not a code quality issue.
 ![booking step one  validation](docs/validation/jslint-stepone.png)
 ![booking step two validation](docs/validation/jslint-steptwo.png)
 ![booking step three validation](docs/validation/jslint-stepthree.png)
-![base.html validation](docs/validation/jslint-base.png)
 
 ---
 ## 12. Bugs
