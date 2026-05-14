@@ -91,7 +91,7 @@ input, select, textarea { font-family: inherit; }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
 
 
 /* ── 3. ANIMATIONS ────────────────────────────────────────── */
