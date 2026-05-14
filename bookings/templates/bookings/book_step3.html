@@ -101,93 +101,105 @@
 
 {% block extra_js %}
 <script>
-  /*
-   * Django template variables injected as JavaScript constants.
-   * These are needed in the AJAX request URL.
-   * {{ barber.id }} and {{ service.id }} are replaced with real numbers
-   * by Django before the page is sent to the browser.
-   */
-  const BARBER_ID  = {{ barber.id }};
-  const SERVICE_ID = {{ service.id }};
-
-  /*
-   * fetchSlots()
-   * Called when the user changes the date input.
-   * Makes an AJAX GET request to /ajax/slots/ and renders results.
-   *
-   * URL structure: /ajax/slots/?barber_id=1&service_id=2&date=2025-06-10
-   * The ? introduces query parameters — Django reads them with request.GET.get()
-   *
-   * fetch() is the modern browser API for HTTP requests.
-   * .then(r => r.json()) parses the JSON response body.
-   * .then(data => ...) processes the parsed data object.
-   */
-  function fetchSlots() {
-    const dateVal   = document.getElementById('booking-date').value;
-    if (!dateVal) return; // guard: do nothing if date is empty
-
-    const container = document.getElementById('time-slots');
-    container.innerHTML = '<span class="time-slot-hint">Loading...</span>';
-
-    // Build the AJAX URL with query parameters
-    fetch(`/ajax/slots/?barber_id=${BARBER_ID}&service_id=${SERVICE_ID}&date=${dateVal}`)
-      .then(r => r.json())
-      .then(data => {
+/*jslint browser: true */
+/*
+ * Django template variables injected as JavaScript constants.
+ * These are needed in the AJAX request URL.
+ * {{ barber.id }} and {{ service.id }} are replaced with real numbers
+ * by Django before the page is sent to the browser.
+ */
+var BARBER_ID = {{ barber.id }};
+var SERVICE_ID = {{ service.id }};
+/*
+ * fetchSlots()
+ * Called when the user changes the date input.
+ * Makes an AJAX GET request to /ajax/slots/ and renders results.
+ *
+ * URL structure: /ajax/slots/?barber_id=1&service_id=2&date=2025-06-10
+ * The ? introduces query parameters — Django reads them with request.GET.get()
+ *
+ * .then(r => r.json()) parses the JSON response body.
+ * .then(data => ...) processes the parsed data object.
+ */
+function fetchSlots() {
+    var dateVal = document.getElementById("booking-date").value;
+    var container = document.getElementById("time-slots");
+    var currentSelected;
+    var url;
+    if (!dateVal) {
+        return;
+    }
+    container.innerHTML = "<span class='time-slot-hint'>Loading...</span>";
+    /* Build the AJAX URL with query parameters */
+    url = "/ajax/slots/?barber_id=" + BARBER_ID +
+        "&service_id=" + SERVICE_ID +
+        "&date=" + dateVal;
+    fetch(url).then(function (r) {
+        return r.json();
+    }).then(function (data) {
         if (data.error) {
-          // Server returned an error (e.g. weekend selected)
-          container.innerHTML = `<span class="time-slot-hint" style="color:var(--red)">${data.error}</span>`;
-          return;
+            /* Server returned an error (e.g. weekend selected) */
+            container.innerHTML = "<span class='time-slot-hint'" +
+                " style='color:var(--red)'>" + data.error + "</span>";
+            return;
         }
         if (data.slots.length === 0) {
-          // No available slots for this date/barber combination
-          container.innerHTML = '<span class="time-slot-hint">No slots available on this date. Try another day.</span>';
-          return;
+            /* No available slots for this date/barber combination */
+            container.innerHTML = "<span class='time-slot-hint'>" +
+                "No slots available on this date. Try another day." +
+                "</span>";
+            return;
         }
-
-        // Get currently selected time (for re-highlighting after fetch)
-        const currentSelected = document.getElementById('selected-time').value;
-
+        /* Get currently selected time (for re-highlighting after fetch) */
+        currentSelected = document.getElementById("selected-time").value;
         /*
          * Render each slot as a clickable div.
-         * data.slots is an array of 'HH:MM' strings from the JSON response.
-         * timeVal appends ':00' to create 'HH:MM:SS' for the hidden input.
+         * data.slots is an array of HH:MM strings from the JSON response.
+         * timeVal appends :00 to create HH:MM:SS for the hidden input.
          * .map() creates an array of HTML strings, .join('') concatenates them.
          */
-        container.innerHTML = data.slots.map(s => {
-          const timeVal = s + ':00';
-          const active  = currentSelected === timeVal ? 'is-selected' : '';
-          return `<div class="time-slot ${active}" onclick="selectSlot(this, '${timeVal}')">${s}</div>`;
-        }).join('');
-      })
-      .catch(() => {
-        // Network error or unexpected server error
-        container.innerHTML = '<span class="time-slot-hint" style="color:var(--red)">Could not load slots. Please try again.</span>';
-      });
-  }
-
-  /*
-   * selectSlot(el, val)
-   * Called when a time slot div is clicked.
-   * Highlights the selected slot and stores the time value in the
-   * hidden input so it is submitted with the form.
-   *
-   * el  → the clicked .time-slot element
-   * val → time string in 'HH:MM:SS' format
-   */
-  function selectSlot(el, val) {
-    // Remove selection from all slots
-    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('is-selected'));
-    // Highlight the clicked slot
-    el.classList.add('is-selected');
-    // Store value in hidden input for form submission
-    document.getElementById('selected-time').value = val;
-  }
-
-  /*
-   * Auto-fetch slots if a date is already set (e.g. after browser back button).
-   * Runs immediately when the page loads.
-   */
-  const existingDate = document.getElementById('booking-date').value;
-  if (existingDate) fetchSlots();
+        container.innerHTML = data.slots.map(function (s) {
+            var timeVal = s + ":00";
+            var active = (currentSelected === timeVal)
+                ? "is-selected"
+                : "";
+            return "<div class='time-slot " + active +
+                "' onclick='selectSlot(this, \"" +
+                timeVal + "\")'>" + s + "</div>";
+        }).join("");
+    }).catch(function () {
+        /* Network error or unexpected server error */
+        container.innerHTML = "<span class='time-slot-hint'" +
+            " style='color:var(--red)'>" +
+            "Could not load slots. Please try again.</span>";
+    });
+}
+/*
+ * selectSlot(el, val)
+ * Called when a time slot div is clicked.
+ * Highlights the selected slot and stores the time value in the
+ * hidden input so it is submitted with the form.
+ *
+ * el  — the clicked .time-slot element
+ * val — time string in HH:MM:SS format
+ */
+function selectSlot(el, val) {
+    /* Remove selection from all slots */
+    document.querySelectorAll(".time-slot").forEach(function (s) {
+        s.classList.remove("is-selected");
+    });
+    /* Highlight the clicked slot */
+    el.classList.add("is-selected");
+    /* Store value in hidden input for form submission */
+    document.getElementById("selected-time").value = val;
+}
+/*
+ * Auto-fetch slots if a date is already set (e.g. after browser back button).
+ * Runs immediately when the page loads.
+ */
+var existingDate = document.getElementById("booking-date").value;
+if (existingDate) {
+    fetchSlots();
+}
 </script>
 {% endblock %}
